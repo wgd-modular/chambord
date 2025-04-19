@@ -5,260 +5,6 @@
 	(uuid "e63e39d7-6ac0-4ffd-8aa3-1841a4541b55")
 	(paper "A2" portrait)
 	(lib_symbols
-		(symbol "Amplifier_Operational:MCP6002-xSN"
-			(pin_names
-				(offset 0.127)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "U"
-				(at 0 5.08 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Value" "MCP6002-xSN"
-				(at 0 -5.08 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(justify left)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/21733j.pdf"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "1MHz, Low-Power Op Amp, SOIC-8"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_locked" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "dual opamp"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "SOIC*3.9x4.9mm*P1.27mm* DIP*W7.62mm* TO*99* OnSemi*Micro8* TSSOP*3x3mm*P0.65mm* TSSOP*4.4x3mm*P0.65mm* MSOP*3x3mm*P0.65mm* SSOP*3.9x4.9mm*P0.635mm* LFCSP*2x2mm*P0.5mm* *SIP* SOIC*5.3x6.2mm*P1.27mm*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "MCP6002-xSN_1_1"
-				(polyline
-					(pts
-						(xy -5.08 5.08) (xy 5.08 0) (xy -5.08 -5.08) (xy -5.08 5.08)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(pin input line
-					(at -7.62 2.54 0)
-					(length 2.54)
-					(name "+"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -7.62 -2.54 0)
-					(length 2.54)
-					(name "-"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin output line
-					(at 7.62 0 180)
-					(length 2.54)
-					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(symbol "MCP6002-xSN_2_1"
-				(polyline
-					(pts
-						(xy -5.08 5.08) (xy 5.08 0) (xy -5.08 -5.08) (xy -5.08 5.08)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type background)
-					)
-				)
-				(pin input line
-					(at -7.62 2.54 0)
-					(length 2.54)
-					(name "+"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "5"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin input line
-					(at -7.62 -2.54 0)
-					(length 2.54)
-					(name "-"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "6"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin output line
-					(at 7.62 0 180)
-					(length 2.54)
-					(name "~"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "7"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(symbol "MCP6002-xSN_3_1"
-				(pin power_in line
-					(at -2.54 7.62 270)
-					(length 3.81)
-					(name "V+"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "8"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin power_in line
-					(at -2.54 -7.62 90)
-					(length 3.81)
-					(name "V-"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "4"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Amplifier_Operational:TL072"
 			(pin_names
 				(offset 0.127)
@@ -4782,7 +4528,7 @@
 	)
 	(text_box "CV"
 		(exclude_from_sim no)
-		(at 193.04 199.39 0)
+		(at 193.04 200.66 0)
 		(size 80.01 48.26)
 		(margins 0.9525 0.9525 0.9525 0.9525)
 		(stroke
@@ -4919,6 +4665,12 @@
 		(uuid "016c274d-6e8a-4755-8866-0ea8c4efa536")
 	)
 	(junction
+		(at 259.08 226.06)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "159642e5-52e8-484a-9063-cf4633059408")
+	)
+	(junction
 		(at 80.01 127)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -4947,12 +4699,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "1f241725-2a7c-4327-8598-a36da6a4f15d")
-	)
-	(junction
-		(at 240.03 214.63)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "216f8c9d-7486-4a7f-b339-9ce8551f3862")
 	)
 	(junction
 		(at 231.14 430.53)
@@ -5093,6 +4839,18 @@
 		(uuid "79b9f168-7fc2-4b92-8b08-6aaa00fa975a")
 	)
 	(junction
+		(at 255.27 226.06)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "82cc5e77-3d02-4b92-9704-5a6a4df60ba4")
+	)
+	(junction
+		(at 234.95 223.52)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "8e886055-9091-4ada-824d-71fad5ccd711")
+	)
+	(junction
 		(at 67.31 127)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5145,12 +4903,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "a366cea2-62ff-4f15-ac95-e7ccbe004fff")
-	)
-	(junction
-		(at 260.35 228.6)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "a3a4c947-83b9-494f-b04c-d885abb33fa0")
 	)
 	(junction
 		(at 44.45 317.5)
@@ -5267,6 +5019,12 @@
 		(uuid "d28dfab6-e697-4dfa-b640-47151288ca13")
 	)
 	(junction
+		(at 234.95 212.09)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "d771dd69-855c-4f38-a8b7-3239704bfd3b")
+	)
+	(junction
 		(at 322.58 165.1)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -5289,12 +5047,6 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "e2569d62-6b01-4cf1-b72f-94be13792dde")
-	)
-	(junction
-		(at 240.03 226.06)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "e3633ddb-29dd-4ec8-9eb4-e420bcab5ae4")
 	)
 	(junction
 		(at 80.01 166.37)
@@ -5403,6 +5155,16 @@
 			(type default)
 		)
 		(uuid "00b7f334-c481-429b-9321-fa427acf7304")
+	)
+	(wire
+		(pts
+			(xy 259.08 226.06) (xy 259.08 227.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0180fa00-2f7c-4248-abdf-697a47ecab43")
 	)
 	(wire
 		(pts
@@ -5586,7 +5348,7 @@
 	)
 	(wire
 		(pts
-			(xy 242.57 226.06) (xy 240.03 226.06)
+			(xy 237.49 223.52) (xy 234.95 223.52)
 		)
 		(stroke
 			(width 0)
@@ -5623,16 +5385,6 @@
 			(type default)
 		)
 		(uuid "1184fcac-6e4e-48a5-a0a5-eb964e9207e4")
-	)
-	(wire
-		(pts
-			(xy 240.03 214.63) (xy 240.03 226.06)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "11adfabc-c615-4cea-b891-4ebf555cd3e5")
 	)
 	(wire
 		(pts
@@ -5956,7 +5708,7 @@
 	)
 	(wire
 		(pts
-			(xy 246.38 214.63) (xy 240.03 214.63)
+			(xy 241.3 212.09) (xy 234.95 212.09)
 		)
 		(stroke
 			(width 0)
@@ -6026,7 +5778,7 @@
 	)
 	(wire
 		(pts
-			(xy 257.81 228.6) (xy 260.35 228.6)
+			(xy 252.73 226.06) (xy 255.27 226.06)
 		)
 		(stroke
 			(width 0)
@@ -6146,6 +5898,16 @@
 	)
 	(wire
 		(pts
+			(xy 259.08 234.95) (xy 259.08 236.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3f5c1aa7-98c4-4ffa-9969-b661b37bc2e8")
+	)
+	(wire
+		(pts
 			(xy 143.51 125.73) (xy 140.97 125.73)
 		)
 		(stroke
@@ -6186,7 +5948,7 @@
 	)
 	(wire
 		(pts
-			(xy 260.35 214.63) (xy 254 214.63)
+			(xy 255.27 212.09) (xy 248.92 212.09)
 		)
 		(stroke
 			(width 0)
@@ -6276,7 +6038,7 @@
 	)
 	(wire
 		(pts
-			(xy 237.49 214.63) (xy 240.03 214.63)
+			(xy 232.41 212.09) (xy 234.95 212.09)
 		)
 		(stroke
 			(width 0)
@@ -6496,7 +6258,7 @@
 	)
 	(wire
 		(pts
-			(xy 260.35 228.6) (xy 260.35 214.63)
+			(xy 255.27 226.06) (xy 255.27 212.09)
 		)
 		(stroke
 			(width 0)
@@ -6766,7 +6528,7 @@
 	)
 	(wire
 		(pts
-			(xy 240.03 226.06) (xy 237.49 226.06)
+			(xy 234.95 223.52) (xy 232.41 223.52)
 		)
 		(stroke
 			(width 0)
@@ -7106,6 +6868,16 @@
 	)
 	(wire
 		(pts
+			(xy 259.08 224.79) (xy 259.08 226.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7aea3cc1-6078-4a23-b77e-70d2723cefbf")
+	)
+	(wire
+		(pts
 			(xy 281.94 441.96) (xy 279.4 441.96)
 		)
 		(stroke
@@ -7233,6 +7005,16 @@
 			(type default)
 		)
 		(uuid "84e25f26-5024-405b-aa4c-f8a06100720f")
+	)
+	(wire
+		(pts
+			(xy 259.08 215.9) (xy 259.08 217.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "855999c2-359f-490b-b0b8-d9935be46295")
 	)
 	(wire
 		(pts
@@ -7756,6 +7538,16 @@
 	)
 	(wire
 		(pts
+			(xy 234.95 212.09) (xy 234.95 223.52)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "add24f56-432b-45bc-afce-304648e291eb")
+	)
+	(wire
+		(pts
 			(xy 128.27 275.59) (xy 128.27 270.51)
 		)
 		(stroke
@@ -7966,7 +7758,7 @@
 	)
 	(wire
 		(pts
-			(xy 229.87 226.06) (xy 227.33 226.06)
+			(xy 224.79 223.52) (xy 222.25 223.52)
 		)
 		(stroke
 			(width 0)
@@ -8096,7 +7888,7 @@
 	)
 	(wire
 		(pts
-			(xy 242.57 231.14) (xy 240.03 231.14)
+			(xy 237.49 228.6) (xy 234.95 228.6)
 		)
 		(stroke
 			(width 0)
@@ -8546,7 +8338,7 @@
 	)
 	(wire
 		(pts
-			(xy 224.79 214.63) (xy 229.87 214.63)
+			(xy 219.71 212.09) (xy 224.79 212.09)
 		)
 		(stroke
 			(width 0)
@@ -8573,6 +8365,16 @@
 			(type default)
 		)
 		(uuid "de501f11-9d74-4c4e-a5a1-010e54fe9f32")
+	)
+	(wire
+		(pts
+			(xy 259.08 226.06) (xy 261.62 226.06)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "df364dda-78e0-46e1-9d1b-5f4d40bd03aa")
 	)
 	(wire
 		(pts
@@ -8646,7 +8448,7 @@
 	)
 	(wire
 		(pts
-			(xy 260.35 228.6) (xy 262.89 228.6)
+			(xy 255.27 226.06) (xy 259.08 226.06)
 		)
 		(stroke
 			(width 0)
@@ -10150,7 +9952,7 @@
 	)
 	(global_label "CV"
 		(shape input)
-		(at 262.89 228.6 0)
+		(at 261.62 226.06 0)
 		(fields_autoplaced yes)
 		(effects
 			(font
@@ -10160,7 +9962,7 @@
 		)
 		(uuid "f0d78da0-975d-4ba5-b35f-ea88881f1536")
 		(property "Intersheetrefs" "${INTERSHEET_REFS}"
-			(at 268.2338 228.6 0)
+			(at 266.9638 226.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10625,7 +10427,7 @@
 	)
 	(symbol
 		(lib_id "power:-10V")
-		(at 224.79 214.63 0)
+		(at 219.71 212.09 0)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -10634,7 +10436,7 @@
 		(dnp no)
 		(uuid "042df3d0-13f6-41f7-bc76-4f3b872bf70f")
 		(property "Reference" "#PWR086"
-			(at 224.79 210.82 0)
+			(at 219.71 208.28 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10643,7 +10445,7 @@
 			)
 		)
 		(property "Value" "-10V"
-			(at 224.79 219.71 0)
+			(at 219.71 217.17 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10651,7 +10453,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 224.79 214.63 0)
+			(at 219.71 212.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10660,7 +10462,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 224.79 214.63 0)
+			(at 219.71 212.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10669,7 +10471,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"-10V\""
-			(at 224.79 214.63 0)
+			(at 219.71 212.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -10951,6 +10753,95 @@
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "#PWR068")
 					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:TL072")
+		(at 193.04 438.15 0)
+		(mirror y)
+		(unit 3)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "09876e81-31fe-4829-87fd-de1a9553bb1b")
+		(property "Reference" "U3"
+			(at 196.85 436.8799 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "TL072"
+			(at 196.85 439.4199 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 193.04 438.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "http://www.ti.com/lit/ds/symlink/tl071.pdf"
+			(at 193.04 438.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual Low-Noise JFET-Input Operational Amplifiers, DIP-8/SOIC-8"
+			(at 193.04 438.15 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e0111c25-cf9b-41a3-aae9-e9f39a41f2ed")
+		)
+		(pin "3"
+			(uuid "33800a95-5e7c-4a1c-9bb4-5f3fefe93fda")
+		)
+		(pin "2"
+			(uuid "90a710a1-246d-4ced-922b-606f6d49b696")
+		)
+		(pin "5"
+			(uuid "af1c00ce-8672-40af-8896-578bad78353e")
+		)
+		(pin "6"
+			(uuid "13407ee8-add3-45a9-80da-b99630ad6f35")
+		)
+		(pin "7"
+			(uuid "3e1a3e9a-e98c-48d2-9998-b1f4455363b7")
+		)
+		(pin "8"
+			(uuid "557a2434-a623-44ba-951e-53a03648bb0b")
+		)
+		(pin "4"
+			(uuid "011f8013-f9be-4b99-86ee-acc103612595")
+		)
+		(instances
+			(project "pcb"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(reference "U3")
+					(unit 3)
 				)
 			)
 		)
@@ -12114,7 +12005,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 227.33 232.41 0)
+		(at 222.25 229.87 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -12123,7 +12014,7 @@
 		(dnp no)
 		(uuid "1ecf8805-a42c-43f8-8db4-040abeafc3c1")
 		(property "Reference" "#PWR080"
-			(at 227.33 238.76 0)
+			(at 222.25 236.22 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12132,7 +12023,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 227.33 237.49 0)
+			(at 222.25 234.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12140,7 +12031,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 227.33 232.41 0)
+			(at 222.25 229.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12149,7 +12040,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 227.33 232.41 0)
+			(at 222.25 229.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -12158,7 +12049,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 227.33 232.41 0)
+			(at 222.25 229.87 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -14349,6 +14240,76 @@
 		)
 	)
 	(symbol
+		(lib_id "Diode:BAT54J")
+		(at 259.08 220.98 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "3acc8007-1be6-45df-a238-fa681e214f62")
+		(property "Reference" "D27"
+			(at 261.62 219.3924 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "BAT54J"
+			(at 261.62 221.9324 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-323F"
+			(at 254.635 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/BAT54J.pdf"
+			(at 259.08 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "30V 200mA Schottky diode, SOD-323F"
+			(at 259.08 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "914ccf1a-f135-4ba6-a10f-95ae57c44cac")
+		)
+		(pin "2"
+			(uuid "5337cfee-4f0f-4c6a-a3db-7e5d4dedc5fe")
+		)
+		(instances
+			(project "pcb"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(reference "D27")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C")
 		(at 247.65 95.25 0)
 		(unit 1)
@@ -15472,7 +15433,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 240.03 231.14 0)
+		(at 234.95 228.6 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -15482,7 +15443,7 @@
 		(fields_autoplaced yes)
 		(uuid "4df42490-fa5e-4a5f-971e-8256926ccc6c")
 		(property "Reference" "#PWR084"
-			(at 240.03 237.49 0)
+			(at 234.95 234.95 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15491,7 +15452,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 240.03 236.22 0)
+			(at 234.95 233.68 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15499,7 +15460,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 240.03 231.14 0)
+			(at 234.95 228.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15508,7 +15469,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 240.03 231.14 0)
+			(at 234.95 228.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15517,7 +15478,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 240.03 231.14 0)
+			(at 234.95 228.6 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -15761,6 +15722,72 @@
 			(project ""
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "Q1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 259.08 236.22 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "53426928-d58e-4c03-a7e3-ec05521139d3")
+		(property "Reference" "#PWR091"
+			(at 259.08 242.57 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 259.08 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 259.08 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 259.08 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 259.08 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "953dd83a-e9dc-48c1-8d46-2213202cbcb9")
+		)
+		(instances
+			(project "pcb"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(reference "#PWR091")
 					(unit 1)
 				)
 			)
@@ -16227,6 +16254,93 @@
 			(project "pcb"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "C9")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:TL072")
+		(at 245.11 226.06 0)
+		(mirror x)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "5a53ffb2-4bd7-4dad-ae85-6206b838df60")
+		(property "Reference" "U3"
+			(at 245.11 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "TL072"
+			(at 245.11 218.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 245.11 226.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "http://www.ti.com/lit/ds/symlink/tl071.pdf"
+			(at 245.11 226.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual Low-Noise JFET-Input Operational Amplifiers, DIP-8/SOIC-8"
+			(at 245.11 226.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "2c6c13c6-697b-4ab2-b68f-091548bb878a")
+		)
+		(pin "3"
+			(uuid "1452c560-18b5-4e1c-9e81-ccbbcffabeec")
+		)
+		(pin "2"
+			(uuid "62dc5597-536a-4751-b5c7-55c68dbad33f")
+		)
+		(pin "5"
+			(uuid "8f914d13-176c-4de4-9d69-57896cec02df")
+		)
+		(pin "6"
+			(uuid "f11d9412-d86d-47ed-aa7b-2640653bbd71")
+		)
+		(pin "7"
+			(uuid "8b8804fd-dc5c-4654-b4c7-44d8780d66fb")
+		)
+		(pin "8"
+			(uuid "557a2434-a623-44ba-951e-53a03648bb0b")
+		)
+		(pin "4"
+			(uuid "011f8013-f9be-4b99-86ee-acc103612595")
+		)
+		(instances
+			(project "pcb"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(reference "U3")
 					(unit 1)
 				)
 			)
@@ -17592,93 +17706,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Amplifier_Operational:MCP6002-xSN")
-		(at 271.78 441.96 0)
-		(mirror x)
-		(unit 2)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "6ee6e790-a70c-4fef-b075-a55e729f477c")
-		(property "Reference" "U3"
-			(at 271.78 431.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "MCP6002-xSN"
-			(at 271.78 434.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
-			(at 271.78 441.96 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/21733j.pdf"
-			(at 271.78 441.96 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "1MHz, Low-Power Op Amp, SOIC-8"
-			(at 271.78 441.96 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "60d0a96d-7b71-4748-819d-c9e82f42ca2a")
-		)
-		(pin "4"
-			(uuid "5765fe05-e5e9-49d1-987b-4b2aff6ab090")
-		)
-		(pin "8"
-			(uuid "6fe570de-b208-49c5-a7e2-69d98d69a543")
-		)
-		(pin "5"
-			(uuid "711c2225-da81-4c3d-9b90-a708a1cba3ce")
-		)
-		(pin "6"
-			(uuid "0b067aca-f072-4c65-822f-a95bee6139d1")
-		)
-		(pin "1"
-			(uuid "168890be-b332-463d-b036-b759bd07a4d8")
-		)
-		(pin "3"
-			(uuid "ab7a8ea4-9746-4abc-a3d9-5bceffdd677d")
-		)
-		(pin "7"
-			(uuid "83eecf2c-42e0-4a1a-a6fd-d7b3a23c1bc2")
-		)
-		(instances
-			(project "pcb"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "U3")
-					(unit 2)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:-12V")
 		(at 231.14 443.23 180)
 		(unit 1)
@@ -18087,6 +18114,72 @@
 			(project "pcb"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "Q2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3V3")
+		(at 259.08 215.9 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "7483438e-ea55-444b-ae05-82e315fd5c00")
+		(property "Reference" "#PWR090"
+			(at 259.08 219.71 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 259.08 210.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 259.08 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 259.08 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 259.08 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "04e892b2-13d0-43e9-8e87-5e4308b67cdd")
+		)
+		(instances
+			(project "pcb"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(reference "#PWR090")
 					(unit 1)
 				)
 			)
@@ -18568,7 +18661,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 227.33 228.6 0)
+		(at 222.25 226.06 0)
 		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
@@ -18578,7 +18671,7 @@
 		(fields_autoplaced yes)
 		(uuid "7eb091e1-df0a-4d64-a516-15c5d7cb9634")
 		(property "Reference" "#PWR081"
-			(at 227.33 234.95 0)
+			(at 222.25 232.41 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18587,7 +18680,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 227.33 233.68 0)
+			(at 222.25 231.14 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18595,7 +18688,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 227.33 228.6 0)
+			(at 222.25 226.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18604,7 +18697,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 227.33 228.6 0)
+			(at 222.25 226.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -18613,7 +18706,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 227.33 228.6 0)
+			(at 222.25 226.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -20938,93 +21031,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Amplifier_Operational:MCP6002-xSN")
-		(at 250.19 228.6 0)
-		(mirror x)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "a74befa9-d8dd-4090-9b92-fcaa9d95033b")
-		(property "Reference" "U3"
-			(at 250.19 218.44 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "MCP6002-xSN"
-			(at 250.19 220.98 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
-			(at 250.19 228.6 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/21733j.pdf"
-			(at 250.19 228.6 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "1MHz, Low-Power Op Amp, SOIC-8"
-			(at 250.19 228.6 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "60d0a96d-7b71-4748-819d-c9e82f42ca2a")
-		)
-		(pin "4"
-			(uuid "5765fe05-e5e9-49d1-987b-4b2aff6ab090")
-		)
-		(pin "8"
-			(uuid "6fe570de-b208-49c5-a7e2-69d98d69a543")
-		)
-		(pin "5"
-			(uuid "7cea01c9-a371-4ea6-9585-614cca94f2b3")
-		)
-		(pin "6"
-			(uuid "4b9a5fcf-9be0-4406-8943-58a5422552a7")
-		)
-		(pin "1"
-			(uuid "168890be-b332-463d-b036-b759bd07a4d8")
-		)
-		(pin "3"
-			(uuid "ab7a8ea4-9746-4abc-a3d9-5bceffdd677d")
-		)
-		(pin "7"
-			(uuid "d3bce129-3621-465f-8260-189c0ea3fdcf")
-		)
-		(instances
-			(project ""
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "U3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:R")
 		(at 43.18 350.52 0)
 		(unit 1)
@@ -21088,6 +21094,76 @@
 			(project "pcb"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "R39")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Diode:BAT54J")
+		(at 259.08 231.14 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "aa6e491b-467c-40b1-9c42-6dfe2b1eeb1b")
+		(property "Reference" "D28"
+			(at 261.62 229.5524 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "BAT54J"
+			(at 261.62 232.0924 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SOD-323F"
+			(at 254.635 231.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://assets.nexperia.com/documents/data-sheet/BAT54J.pdf"
+			(at 259.08 231.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "30V 200mA Schottky diode, SOD-323F"
+			(at 259.08 231.14 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "52230ca3-c025-495b-8744-03c640e80ff0")
+		)
+		(pin "2"
+			(uuid "35ca6dfc-dc27-408e-a2fb-c2db94cc7a68")
+		)
+		(instances
+			(project "pcb"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(reference "D28")
 					(unit 1)
 				)
 			)
@@ -21502,7 +21578,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 233.68 226.06 270)
+		(at 228.6 223.52 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -21511,7 +21587,7 @@
 		(fields_autoplaced yes)
 		(uuid "b467ebc6-4a47-469d-bb52-d21ad352922c")
 		(property "Reference" "R57"
-			(at 233.68 219.71 90)
+			(at 228.6 217.17 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21519,7 +21595,7 @@
 			)
 		)
 		(property "Value" "100K"
-			(at 233.68 222.25 90)
+			(at 228.6 219.71 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21527,7 +21603,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 233.68 224.282 90)
+			(at 228.6 221.742 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21536,7 +21612,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 233.68 226.06 0)
+			(at 228.6 223.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -21545,7 +21621,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 233.68 226.06 0)
+			(at 228.6 223.52 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22178,7 +22254,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 250.19 214.63 270)
+		(at 245.11 212.09 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -22187,7 +22263,7 @@
 		(fields_autoplaced yes)
 		(uuid "bd844498-447a-4ec1-b784-7fac4eef82d1")
 		(property "Reference" "R58"
-			(at 250.19 208.28 90)
+			(at 245.11 205.74 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22195,7 +22271,7 @@
 			)
 		)
 		(property "Value" "15K"
-			(at 250.19 210.82 90)
+			(at 245.11 208.28 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22203,7 +22279,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 250.19 212.852 90)
+			(at 245.11 210.312 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22212,7 +22288,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 250.19 214.63 0)
+			(at 245.11 212.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22221,7 +22297,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 250.19 214.63 0)
+			(at 245.11 212.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22303,6 +22379,93 @@
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "#PWR075")
 					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Amplifier_Operational:TL072")
+		(at 271.78 441.96 0)
+		(mirror x)
+		(unit 2)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "bff36e00-39af-47ac-ad1d-524de35ce5d1")
+		(property "Reference" "U3"
+			(at 271.78 431.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "TL072"
+			(at 271.78 434.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+			(at 271.78 441.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "http://www.ti.com/lit/ds/symlink/tl071.pdf"
+			(at 271.78 441.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Dual Low-Noise JFET-Input Operational Amplifiers, DIP-8/SOIC-8"
+			(at 271.78 441.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e0111c25-cf9b-41a3-aae9-e9f39a41f2ed")
+		)
+		(pin "3"
+			(uuid "33800a95-5e7c-4a1c-9bb4-5f3fefe93fda")
+		)
+		(pin "2"
+			(uuid "90a710a1-246d-4ced-922b-606f6d49b696")
+		)
+		(pin "5"
+			(uuid "8f914d13-176c-4de4-9d69-57896cec02df")
+		)
+		(pin "6"
+			(uuid "f11d9412-d86d-47ed-aa7b-2640653bbd71")
+		)
+		(pin "7"
+			(uuid "8b8804fd-dc5c-4654-b4c7-44d8780d66fb")
+		)
+		(pin "8"
+			(uuid "557a2434-a623-44ba-951e-53a03648bb0b")
+		)
+		(pin "4"
+			(uuid "011f8013-f9be-4b99-86ee-acc103612595")
+		)
+		(instances
+			(project "pcb"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(reference "U3")
+					(unit 2)
 				)
 			)
 		)
@@ -22510,7 +22673,7 @@
 	)
 	(symbol
 		(lib_id "eurocad:PJ301M-12")
-		(at 215.9 228.6 0)
+		(at 210.82 226.06 0)
 		(mirror x)
 		(unit 1)
 		(exclude_from_sim no)
@@ -22519,7 +22682,7 @@
 		(dnp no)
 		(uuid "c424f90f-9624-46bb-81f2-573cf83230fe")
 		(property "Reference" "J12"
-			(at 203.2 230.5051 0)
+			(at 198.12 227.9651 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22528,7 +22691,7 @@
 			)
 		)
 		(property "Value" "PJ301M-12"
-			(at 203.2 227.9651 0)
+			(at 198.12 225.4251 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22537,7 +22700,7 @@
 			)
 		)
 		(property "Footprint" "Eurocad:PJ301M-12"
-			(at 215.9 228.6 0)
+			(at 210.82 226.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22546,7 +22709,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 215.9 228.6 0)
+			(at 210.82 226.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -22554,7 +22717,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 215.9 228.6 0)
+			(at 210.82 226.06 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -23135,94 +23298,6 @@
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "#PWR045")
 					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Amplifier_Operational:MCP6002-xSN")
-		(at 198.12 438.15 0)
-		(unit 3)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "d1361404-2af9-43a1-982e-9c5e4ba383c9")
-		(property "Reference" "U3"
-			(at 196.85 436.8799 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "MCP6002-xSN"
-			(at 196.85 439.4199 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
-			(at 198.12 438.15 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/21733j.pdf"
-			(at 198.12 438.15 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "1MHz, Low-Power Op Amp, SOIC-8"
-			(at 198.12 438.15 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "60d0a96d-7b71-4748-819d-c9e82f42ca2a")
-		)
-		(pin "4"
-			(uuid "5765fe05-e5e9-49d1-987b-4b2aff6ab090")
-		)
-		(pin "8"
-			(uuid "6fe570de-b208-49c5-a7e2-69d98d69a543")
-		)
-		(pin "5"
-			(uuid "7cea01c9-a371-4ea6-9585-614cca94f2b3")
-		)
-		(pin "6"
-			(uuid "4b9a5fcf-9be0-4406-8943-58a5422552a7")
-		)
-		(pin "1"
-			(uuid "168890be-b332-463d-b036-b759bd07a4d8")
-		)
-		(pin "3"
-			(uuid "ab7a8ea4-9746-4abc-a3d9-5bceffdd677d")
-		)
-		(pin "7"
-			(uuid "d3bce129-3621-465f-8260-189c0ea3fdcf")
-		)
-		(instances
-			(project ""
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "U3")
-					(unit 3)
 				)
 			)
 		)
@@ -24335,7 +24410,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 233.68 214.63 270)
+		(at 228.6 212.09 270)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -24344,7 +24419,7 @@
 		(fields_autoplaced yes)
 		(uuid "ea149b47-af79-41a9-a002-b03549007090")
 		(property "Reference" "R59"
-			(at 233.68 208.28 90)
+			(at 228.6 205.74 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24352,7 +24427,7 @@
 			)
 		)
 		(property "Value" "100K"
-			(at 233.68 210.82 90)
+			(at 228.6 208.28 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24360,7 +24435,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0603_1608Metric"
-			(at 233.68 212.852 90)
+			(at 228.6 210.312 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24369,7 +24444,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 233.68 214.63 0)
+			(at 228.6 212.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -24378,7 +24453,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 233.68 214.63 0)
+			(at 228.6 212.09 0)
 			(effects
 				(font
 					(size 1.27 1.27)
