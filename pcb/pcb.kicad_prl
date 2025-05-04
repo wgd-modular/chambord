@@ -48,7 +48,7 @@
       "drc_warnings",
       "shapes"
     ],
-    "visible_layers": "00000000_00000000_0fffffff_ffffffff",
+    "visible_layers": "00000000_00000000_0fffffff_fff7ffff",
     "zone_display_mode": 0
   },
   "git": {
@@ -119,7 +119,7 @@
       "images": true,
       "labels": true,
       "lockedItems": false,
-      "otherItems": false,
+      "otherItems": true,
       "pins": true,
       "symbols": true,
       "text": true,

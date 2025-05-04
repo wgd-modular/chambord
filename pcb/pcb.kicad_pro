@@ -491,7 +491,7 @@
       "netlist": "",
       "plot": "",
       "pos_files": "",
-      "specctra_dsn": "",
+      "specctra_dsn": "../../../../chambord.dsn",
       "step": "",
       "svg": "",
       "vrml": ""
