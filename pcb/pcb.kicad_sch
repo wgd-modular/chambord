@@ -5693,6 +5693,16 @@
 	)
 	(wire
 		(pts
+			(xy 208.28 86.36) (xy 208.28 81.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "0a56851e-ab3e-4020-bb3f-d61797393d71")
+	)
+	(wire
+		(pts
 			(xy 125.73 359.41) (xy 121.92 359.41)
 		)
 		(stroke
@@ -8820,6 +8830,16 @@
 			(type default)
 		)
 		(uuid "e113a0b3-a7e0-4718-ae07-d7b37940305f")
+	)
+	(wire
+		(pts
+			(xy 219.71 86.36) (xy 208.28 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e1915025-19fd-4a21-a1f5-3dbdc4f711d6")
 	)
 	(wire
 		(pts
@@ -20172,6 +20192,70 @@
 			(project "pcb"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "#PWR019")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:+3.3V")
+		(at 208.28 81.28 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "98d9c6f3-88e8-4bc7-929e-84aedcf6e374")
+		(property "Reference" "#PWR093"
+			(at 208.28 85.09 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 213.36 80.01 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 208.28 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 208.28 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 208.28 81.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "999e1de7-e3cf-4f6a-91f2-c2deb88ed753")
+		)
+		(instances
+			(project "pcb"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(reference "#PWR093")
 					(unit 1)
 				)
 			)
