@@ -49,6 +49,7 @@ sequencer seq[NTRACKS] = {
 // clock all the sequencers
 // clockperiod is the period of the 24ppqn clock - used for calculating gate times etc - not used as yet
 // it loops thru all tracks looking for trigger events to process
+
 void clocktick (long clockperiod) {
 
   for (uint8_t track = 0; track < NTRACKS; ++track) { // note that triggers are stored MSB first
