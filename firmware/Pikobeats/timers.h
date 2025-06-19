@@ -8,10 +8,12 @@
 #include "RPi_Pico_ISR_Timer.h"
 //#include <SimpleTimer.h>
 
+bool timersUp = false;
+
 // 5ms = 200hz, 1ms 1000hz
 // 1ms = 1000Us
 // Init RPI_PICO_Timer
-RPI_PICO_Timer ITimer3(3);
+RPI_PICO_Timer ITimer3(0);
 
 // Init ISR_Timer
 // Each ISR_Timer can service 16 different ISR-based timers
@@ -46,13 +48,18 @@ void b2mS() {
 }
 
 void b5mS() {
-digitalWrite(led[current_track], 1);
+  digitalWrite( led[current_track], 1);
 }
 
 void b7mS() {
-
+  if (timersUp) {
+    digitalWrite(led[7], 1);
+  }
+  if (display_mode == 1) {
+    digitalWrite(led[7], 1);
+  }
 }
 
 void b10mS() {
-  digitalWrite(led[current_track], 0);
+  digitalWrite( led[current_track], 0);
 }

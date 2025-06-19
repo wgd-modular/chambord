@@ -51,6 +51,14 @@ bool debug = false;
 #include "euclid.h"
 #include "filter.h"
 
+enum {
+  MODE_PLAY = 0,
+  MODE_CONFIG,
+  MODE_COUNT   // how many modes we got
+};
+
+int display_mode = MODE_PLAY;
+
 // these are irq timers for handling led signals
 #include "timers.h"
 
@@ -68,6 +76,7 @@ static void startAudio() {
   DAC.setBCLK(pBCLK);
   DAC.setDATA(pDOUT);
   DAC.setBitsPerSample(16);
+  DAC.setBuffers(4, 128, 0);
   DAC.begin(48000);
 }
 
@@ -81,8 +90,6 @@ inline bool canBufferAudioOutput() {
 // additions
 #include <Wire.h>
 #include <RotaryEncoder.h>
-
-
 
 // from pikocore for bpm calcs on clk input
 // this is unused, deprecate?
@@ -130,14 +137,6 @@ char seq_info[11];  // 10 chars + nul FIXME
 
 bool encoder_held = false;
 
-
-enum {
-  MODE_PLAY = 0,
-  MODE_CONFIG,
-  MODE_COUNT   // how many modes we got
-};
-
-int display_mode = MODE_PLAY;
 uint8_t display_repeats = 0;
 uint8_t display_vol = 100;
 uint8_t display_pitch = 50;
@@ -224,7 +223,7 @@ bool scanbuttons(void)
         pressed = digitalRead(BUTTON7);
         break;
       case 8:
-        pressed = !digitalRead(SHIFTBUTTON);
+        pressed = digitalRead(SHIFTBUTTON);
         break;
     }
 
@@ -268,6 +267,8 @@ uint16_t rightRotate(int shift, uint16_t value, uint8_t pattern_length) {
   return ((value >> shift) | (value << (pattern_length - shift))) & mask;
 }
 
+
+
 // main core setup
 void setup() {
   // set clock speed as in picokore
@@ -279,8 +280,10 @@ void setup() {
   if (ITimer3.attachInterruptInterval(HW_TIMER_INTERVAL_MS * 1000, TimerHandler)) {
     if (debug) Serial.print(F("Starting ITimer1 OK, millis() = "));
     if (debug) Serial.println(millis());
+    timersUp = true;
   } else {
     if (debug) Serial.println(F("Can't set ITimer1. Select another freq. or timer"));
+    timersUp = false;
   }
 
 
@@ -317,7 +320,7 @@ void setup() {
   pinMode(BUTTON5, INPUT);
   pinMode(BUTTON6, INPUT);
   pinMode(BUTTON7, INPUT);
-  pinMode(SHIFTBUTTON, INPUT_PULLUP); // encoder button
+  pinMode(SHIFTBUTTON, INPUT); // encoder button
 
   pinMode(CV, INPUT);
 
@@ -396,22 +399,14 @@ void loop() {
   for (int i = 0; i <= 8; ++i) { // scan all the buttons
     if (button[i]) {
       anybuttonpressed = true;
+      
       digitalWrite(led[i], 1);
       voice[i].sampleindex = 0; // trigger sample for this track
       voice[i].isPlaying = true;
-      /*
-            for (uint8_t track = 0; track < NTRACKS; ++track) { // note that triggers are stored MSB first
-              if ( seq[track].trigger->getCurrentStep() ) {
-                voice[track].sampleindex = 0; // trigger sample for this track
-                voice[track].isPlaying = true;
-              } else {
-                voice[track].isPlaying = false;
-              }
-              // seq[track].trigger->doStep(); // next step advance
-
-            }*/
     } else {
+      if (i < 6 && i != current_track) { // debug only
       digitalWrite(led[i], 0);
+      }
       //voice[i].isPlaying = false;
     }
   }
@@ -453,7 +448,7 @@ void loop() {
   */
 
   // now, after buttons check if only encoder moved and no buttons
-  if (! anybuttonpressed && encoder_delta ) {
+  if ( encoder_delta && display_mode == 0 ) {
     // select a channel
     // a track button is pressed
     current_track = current_track + encoder_delta;
@@ -462,7 +457,8 @@ void loop() {
   
   // button 8 is the encoder button
   // change pitch, mode 1, encoder button depressed.
-  if ( (encoder_pos != encoder_pos_last ) && button[8] && display_mode == 1 ) {
+  if ( ( encoder_delta) && button[8] && display_mode == 1 ) {
+    
     int pitch_change = voice[current_track].sampleincrement + encoder_delta;
     constrain(pitch_change, 0, 100);
     // divisible by 2 and it won't click
@@ -473,7 +469,7 @@ void loop() {
   }
 
   // permits us to switch sample on channel
-  if ( (encoder_pos != encoder_pos_last ) && button[8] && display_mode == 2 ) {
+  if ( ( encoder_delta ) && button[8] && display_mode == 2 ) {
     rp2040.idleOtherCore();
     int result = voice[current_track].sample + encoder_delta;
     if (result >= 0 && result <= NUM_SAMPLES - 1) {
@@ -559,11 +555,11 @@ void loop1() {
   digitalWrite(CPU_USE, 0); // low - CPU not busy
 #endif
 
-  if ( canBufferAudioOutput() ) {
+  //if ( canBufferAudioOutput() ) {
     // write samples to DMA buffer - this is a blocking call so it stalls when buffer is full
     DAC.write(int16_t(samplesum)); // left
     DAC.write(int16_t(samplesum)); // left
-  }
+  //}
 
 #ifdef MONITOR_CPU
   digitalWrite(CPU_USE, 1); // hi = CPU busy
