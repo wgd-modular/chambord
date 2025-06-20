@@ -402,7 +402,10 @@ void loop() {
     } else {
       // not a hit, turn it off, except for pin 7 in mode 1&2
       if (i != current_track && display_mode == 0) { 
-        digitalWrite(led[i], 0);
+        digitalWrite(led[i], 0); 
+      }
+      if (i != current_track && i != 7 && display_mode != 0) {
+        digitalWrite(led[i], 0); 
       }
       //voice[i].isPlaying = false;
     }
@@ -420,7 +423,7 @@ void loop() {
 
     // mode 1, adjust pitch.
     if ( display_mode == 1 ) {
-      int pitch_change = voice[current_track].sampleincrement + (encoder_delta * 10);
+      int pitch_change = voice[current_track].sampleincrement - (encoder_delta * 10);
       constrain(pitch_change, 2048, 8192);
 
       // divisible by 2 and it won't click
