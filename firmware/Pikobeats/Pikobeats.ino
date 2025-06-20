@@ -157,6 +157,7 @@ uint8_t filter_fc = LPF_MAX + 10;
 uint8_t hpf_fc = 0;
 uint8_t filter_q = 0;
 
+int16_t CV_last;
 
 //#define MONITOR_CPU  // define to monitor Core 2 CPU usage on pin CPU_USE
 
@@ -289,7 +290,7 @@ void setup() {
     if (debug) Serial.println(F("Can't set ITimer1. Select another freq. or timer"));
     timersUp = false;
   }
-
+  analogReadResolution(10);
 
   // Just to demonstrate, don't use too many ISR Timers if not absolutely necessary
   // You can use up to 16 timer for each ISR_Timer
@@ -324,8 +325,6 @@ void setup() {
   pinMode(BUTTON5, INPUT);
   pinMode(BUTTON6, INPUT);
   pinMode(BUTTON7, INPUT);
-
-  pinMode(CV, INPUT);
 
   pinMode(LED0, OUTPUT);
   pinMode(LED1, OUTPUT);
@@ -402,15 +401,15 @@ void loop() {
       //voice[i].isPlaying = false;
       voice[i].sampleindex = 0; // trigger sample for this track
       voice[i].isPlaying = true;
-      
+
     } else {
       // not a hit, turn it off, except for pin 7 in mode 1&2
       /*
-      if (i != current_track && display_mode == 0) {
+        if (i != current_track && display_mode == 0) {
         digitalWrite(led[i], 0);
-      }*/
+        }*/
       //if (i != current_track && i != 7 && display_mode != 0) {
-       if ( ( display_mode != 0 && i !=7 ) || ( i != current_track && display_mode == 0 ) ) { 
+      if ( ( display_mode != 0 && i != 7 ) || ( i != current_track && display_mode == 0 ) ) {
         digitalWrite(led[i], 0);
       }
       //voice[i].isPlaying = false;
@@ -423,8 +422,11 @@ void loop() {
     // mode 0, channel select
     if ( display_mode == 0 && ! enc_button.pressed() )  {
       // select a channel in mode one
+      // first reset level 
+      voice[current_track].level = 900;
       current_track = current_track + encoder_delta;
       constrain(current_track, 0, 7);
+      
     }
 
     // mode 1, adjust pitch.
@@ -441,13 +443,10 @@ void loop() {
 
     // permits us to switch sample on channel in mode 2
     if ( display_mode == 2 ) {
-      
       int result = voice[current_track].sample + encoder_delta;
       if (result >= 0 && result <= NUM_SAMPLES - 1) {
         voice[current_track].sample = result;
       }
-      
-
     }
   }
 
@@ -468,6 +467,15 @@ void loop() {
     encoder_held = false;
   }
 
+  // change sample volume level on current_track with cv in.
+  // ADC is on a timer
+  if (display_mode == 0) {
+    if (CV != CV_last) {
+      voice[current_track].level = CV;
+      CV_last = CV;
+      
+    }
+  }
 
 
   /*

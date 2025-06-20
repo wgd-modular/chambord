@@ -33,7 +33,7 @@
 
 // analog inputs for voltage control - range approx 0-5v
 // 
-#define CV 	26
+//#define CV 	A0
 
 // button inputs
 #define BUTTON0 0 // key1 input on schematic

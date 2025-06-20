@@ -43,6 +43,7 @@ typedef void (*irqCallback)  ();
 
 volatile  bool toggle_one  = false;
 volatile  bool toggle_two  = false;
+volatile  int16_t CV;
 
 void b2mS() {
   if (display_mode == 1) {
@@ -63,12 +64,16 @@ void b7mS() {
   if (display_mode == 1) {
     digitalWrite(led[7], 0);
   }
+  CV = analogRead(A0);
 
 }
 
 void b10mS() {
+  
   digitalWrite( led[current_track], 0);
+  
   encoder.tick(); // moved here to keep it quiet?
+  
   if (display_mode == 2) {
     digitalWrite(led[7], 0);
   }
