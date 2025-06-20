@@ -46,16 +46,30 @@ volatile  bool toggle_two  = false;
 volatile  int16_t CV;
 
 void b2mS() {
-  if (display_mode == 1) {
-    digitalWrite(led[7], 1);
+  
+  // update the channel led 
+  for (int i = 0; i <= 8; ++i) { // scan all the buttons
+    if (button[i]) {
+      digitalWrite(led[i], 1);
+    } else {
+      if (i != current_track ) {
+        if ( ( display_mode != 0 && i != 7 ) || ( display_mode == 0 ) ) {
+          digitalWrite(led[i], 0);
+        }
+      }
+    }
   }
+  
 }
 
 void b5mS() {
-  digitalWrite( led[current_track], 1);
 
-  if (display_mode == 2) {
+
+  if (display_mode == 2 ||  display_mode == 1) {
     digitalWrite(led[7], 1);
+  }
+  if (voice[current_track].isPlaying == false) {
+    digitalWrite( led[current_track], 1);
   }
 
 }
@@ -64,17 +78,19 @@ void b7mS() {
   if (display_mode == 1) {
     digitalWrite(led[7], 0);
   }
-  CV = analogRead(A0);
+
+
 
 }
 
 void b10mS() {
-  
-  digitalWrite( led[current_track], 0);
-  
-  encoder.tick(); // moved here to keep it quiet?
-  
+
+  if (voice[current_track].isPlaying == false) {
+    digitalWrite( led[current_track], 0);
+  }
+
   if (display_mode == 2) {
     digitalWrite(led[7], 0);
   }
+  CV = analogRead(A0);
 }

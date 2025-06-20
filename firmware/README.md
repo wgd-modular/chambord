@@ -4,4 +4,4 @@ This directory contains a number of variant firmware and support files for Chamb
 
 # Status
 
-19.06.2025 - Currently, only the i2schambord firmware has any utility :)
+20.06.2025 - The current status is beta for Pikobeats. An initial uf2 is included for testing. Angular jungle set.

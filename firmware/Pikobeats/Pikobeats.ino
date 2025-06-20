@@ -52,6 +52,43 @@ bool debug = false;
 #include "euclid.h"
 #include "filter.h"
 
+// we have 8 voices that can play any sample when triggered
+// this structure holds the settings for each voice
+// 80s only to 20, jungle to 29
+//we use a header per sample set
+#include "80s.h"
+//#include "beatbox.h"
+//#include "bbox.h"
+//#include "angularj.h"
+
+// we can have an arbitrary number of samples but you will run out of memory at some point
+// sound sample files are 22khz 16 bit signed PCM format - see the sample include files for examples
+// you can change the sample rate to whatever you want but most testing was done at 22khz. 44khz probably works but not much testing was done
+// use the wave2header22khz.exe utility to automagically batch convert all the .wav files in a directory into the required header files
+// put your 22khz or 44khz PCM wav files in a sample subdirectory with a copy of the utility, run the utility and it will generate all the required header files
+// wave2header creates a header file containing the signed PCM values for each sample - note that it may change the name of the file if required to make it "c friendly"
+// wave2header also creates sampledefs.h which is an array of structures containing information about each sample file
+// the samples are arranged in alphabetical order to facilitate grouping samples by name - you can manually edit this file to change the order of the samples as needed
+// sampledefs.h contains other information not used by this program e.g. the name of the sample file - I wrote it for another project
+// wave2header also creates "samples.h" which #includes all the generated header files
+
+//#include "Jungle/samples.h"
+//#include "808samples/samples.h" // 808 sounds
+//#include "Angular_Jungle_Set/samples.h"   // Jungle soundfont set - great!
+//#include "Angular_Techno_Set/samples.h"   // Techno
+//#include "Acoustic3/samples.h"   // acoustic drums
+//#include "Pico_kit/samples.h"   // assorted samples
+//#include "testkit/samples.h"   // small kit for testing
+//#include "Trashrez/samples.h"
+//#include "world/samples.h"
+//#include "mt40sr88sy1/samples.h"
+//#include "kurzweill/samples.h"
+//#include "beatbox/samples.h"
+//#include "bbox/samples.h"
+
+
+#define NUM_SAMPLES (sizeof(sample)/sizeof(sample_t))
+
 enum {
   MODE_PLAY = 0,
   MODE_CONFIG,
@@ -162,42 +199,6 @@ int16_t CV_last;
 //#define MONITOR_CPU  // define to monitor Core 2 CPU usage on pin CPU_USE
 
 
-// we have 8 voices that can play any sample when triggered
-// this structure holds the settings for each voice
-// 80s only to 20, jungle to 29
-//we use a header per sample set
-//#include "80s.h"
-//#include "beatbox.h"
-//#include "bbox.h"
-#include "angularj.h"
-
-// we can have an arbitrary number of samples but you will run out of memory at some point
-// sound sample files are 22khz 16 bit signed PCM format - see the sample include files for examples
-// you can change the sample rate to whatever you want but most testing was done at 22khz. 44khz probably works but not much testing was done
-// use the wave2header22khz.exe utility to automagically batch convert all the .wav files in a directory into the required header files
-// put your 22khz or 44khz PCM wav files in a sample subdirectory with a copy of the utility, run the utility and it will generate all the required header files
-// wave2header creates a header file containing the signed PCM values for each sample - note that it may change the name of the file if required to make it "c friendly"
-// wave2header also creates sampledefs.h which is an array of structures containing information about each sample file
-// the samples are arranged in alphabetical order to facilitate grouping samples by name - you can manually edit this file to change the order of the samples as needed
-// sampledefs.h contains other information not used by this program e.g. the name of the sample file - I wrote it for another project
-// wave2header also creates "samples.h" which #includes all the generated header files
-
-//#include "Jungle/samples.h"
-//#include "808samples/samples.h" // 808 sounds
-//#include "Angular_Jungle_Set/samples.h"   // Jungle soundfont set - great!
-//#include "Angular_Techno_Set/samples.h"   // Techno
-//#include "Acoustic3/samples.h"   // acoustic drums
-//#include "Pico_kit/samples.h"   // assorted samples
-//#include "testkit/samples.h"   // small kit for testing
-//#include "Trashrez/samples.h"
-//#include "world/samples.h"
-//#include "mt40sr88sy1/samples.h"
-//#include "kurzweill/samples.h"
-//#include "beatbox/samples.h"
-//#include "bbox/samples.h"
-
-
-#define NUM_SAMPLES (sizeof(sample)/sizeof(sample_t))
 
 // sample and debounce
 // scan input jacks
@@ -360,14 +361,33 @@ void setup() {
 
 // main core handles UI
 void loop() {
-  bool anybuttonpressed;
+
   // timer
   uint32_t now = millis();
+  scanbuttons(); // actually jack inputs
+  
+  // update the channel led & play sample
+  for (int i = 0; i <= 8; ++i) { // scan all the buttons
+    if (button[i]) {
+      //digitalWrite(led[i], 1);
+      //voice[i].isPlaying = false;
+      voice[i].sampleindex = 0; // trigger sample for this track
+      voice[i].isPlaying = true;
 
+    } else {
+      // not a hit, turn it off, except for pin 7 in mode 1&2
+/*
+      if (i != current_track ) {
+        if ( ( display_mode != 0 && i != 7 ) || ( display_mode == 0 ) ) {
+          digitalWrite(led[i], 0);
+        }
+      }
+      */
+    }
+    
+  }
 
-  // UI handlers
-  // first encoder
-  //encoder.tick(); moved to a timer to keep the noise down.
+  encoder.tick();
 
   int encoder_pos = encoder.getPosition();
   if ( (encoder_pos != encoder_pos_last )) {
@@ -392,29 +412,7 @@ void loop() {
   // update encoder button state
   enc_button.update();
 
-  scanbuttons(); // actually jack inputs
-
-  // update the channel led & play sample
-  for (int i = 0; i <= 8; ++i) { // scan all the buttons
-    if (button[i]) {
-      digitalWrite(led[i], 1);
-      //voice[i].isPlaying = false;
-      voice[i].sampleindex = 0; // trigger sample for this track
-      voice[i].isPlaying = true;
-
-    } else {
-      // not a hit, turn it off, except for pin 7 in mode 1&2
-      /*
-        if (i != current_track && display_mode == 0) {
-        digitalWrite(led[i], 0);
-        }*/
-      //if (i != current_track && i != 7 && display_mode != 0) {
-      if ( ( display_mode != 0 && i != 7 ) || ( i != current_track && display_mode == 0 ) ) {
-        digitalWrite(led[i], 0);
-      }
-      //voice[i].isPlaying = false;
-    }
-  }
+  // led updates on timer
 
 
   // use encoder and button
@@ -422,11 +420,11 @@ void loop() {
     // mode 0, channel select
     if ( display_mode == 0 && ! enc_button.pressed() )  {
       // select a channel in mode one
-      // first reset level 
-      voice[current_track].level = 900;
+      // first reset level if CV is in use
+      voice[current_track].level = 800;
       current_track = current_track + encoder_delta;
       constrain(current_track, 0, 7);
-      
+
     }
 
     // mode 1, adjust pitch.
@@ -473,11 +471,12 @@ void loop() {
     if (CV != CV_last) {
       voice[current_track].level = CV;
       CV_last = CV;
-      
+
     }
   }
 
 
+  
   /*
      These are from the original scarp peakobeats
       if ( (encoder_pos != encoder_pos_last ) && display_mode == 1 ) {
@@ -515,6 +514,32 @@ void loop() {
       }
   */
 }
+
+void update_leds() {
+  // update the channel led & play sample
+  for (int i = 0; i <= 8; ++i) { // scan all the buttons
+    if (button[i]) {
+      digitalWrite(led[i], 1);
+      //voice[i].isPlaying = false;
+      voice[i].sampleindex = 0; // trigger sample for this track
+      voice[i].isPlaying = true;
+
+    } else {
+      // not a hit, turn it off, except for pin 7 in mode 1&2
+      /*
+        if (i != current_track && display_mode == 0) {
+        digitalWrite(led[i], 0);
+        }*/
+      if (i != current_track ) {
+        if ( ( display_mode != 0 && i != 7 ) || ( display_mode == 0 ) ) {
+          digitalWrite(led[i], 0);
+        }
+      }
+      //voice[i].isPlaying = false;
+    }
+  }
+}
+
 
 
 // second core setup
