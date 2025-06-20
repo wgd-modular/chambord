@@ -1,7 +1,8 @@
-/* Copyright 2023 Rich Heslip, 2024 Mark Washeim
-
-  Author: Rich Heslip
+/* Copyright 2025 Mark Washeim
   Author: Mark Washeim <blueprint@poetaster.de>
+
+  This program is a derivative of one made by Rich Heslip, 2023,
+  The euclidean bits are derivatives of code from bastl instruments.
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -86,6 +87,10 @@ static void stopAudio() {
 inline bool canBufferAudioOutput() {
   return (DAC.availableForWrite());
 }
+
+// encoder button
+#include <Bounce2.h>
+Bounce2::Button enc_button = Bounce2::Button();
 
 // additions
 #include <Wire.h>
@@ -192,7 +197,7 @@ uint8_t filter_q = 0;
 #define NUM_SAMPLES (sizeof(sample)/sizeof(sample_t))
 
 // sample and debounce
-// scan inputs , both jacks and buttons
+// scan input jacks
 bool scanbuttons(void)
 {
   bool pressed;
@@ -221,9 +226,6 @@ bool scanbuttons(void)
         break;
       case 7:
         pressed = digitalRead(BUTTON7);
-        break;
-      case 8:
-        pressed = digitalRead(SHIFTBUTTON);
         break;
     }
 
@@ -297,16 +299,16 @@ void setup() {
 
   if (debug) Serial.flush();
 
-  // Additions
+
   // ENCODER
   pinMode(encoderA_pin, INPUT_PULLUP);
   pinMode(encoderB_pin, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(encoderA_pin), checkEncoderPosition, CHANGE);
   attachInterrupt(digitalPinToInterrupt(encoderB_pin), checkEncoderPosition, CHANGE);
-
-
-
-  // end Additions
+  // Encoder button
+  enc_button.attach( SHIFTBUTTON, INPUT ); // USE EXTERNAL PULL-UP
+  enc_button.interval(5); // 5ms debounce
+  enc_button.setPressedState(LOW);
 
 #ifdef MONITOR_CPU
   pinMode(CPU_USE, OUTPUT); // for monitoring CPU usage
@@ -320,7 +322,6 @@ void setup() {
   pinMode(BUTTON5, INPUT);
   pinMode(BUTTON6, INPUT);
   pinMode(BUTTON7, INPUT);
-  pinMode(SHIFTBUTTON, INPUT); // encoder button
 
   pinMode(CV, INPUT);
 
@@ -366,23 +367,17 @@ void loop() {
   // UI handlers
   // first encoder
   encoder.tick();
-  
+
   int encoder_pos = encoder.getPosition();
   if ( (encoder_pos != encoder_pos_last )) {
     encoder_delta = encoder_pos - encoder_pos_last;
   }
 
-
-  // set play mode 0 play 1 edit patterns, 3 FX?
+  // set play mode 0 play 1 edit pitch, 2 edit channel sample,
   if (encoder_push_millis > 0 ) {
     if ((now - encoder_push_millis) > 25 && ! encoder_delta ) {
       if ( !encoder_held ) {
         encoder_held = true;
-        display_mode = display_mode + 1;
-        if ( display_mode > 2) { // switched back to play mode
-          display_mode = 0;
-          //configure_sequencer();
-        }
       }
     }
 
@@ -392,26 +387,82 @@ void loop() {
       }
     }
   }
-  
-  scanbuttons(); // actuall jack inputs
-  anybuttonpressed = false;
 
+  // update encoder button state
+  enc_button.update();
+  
+  scanbuttons(); // actually jack inputs
+  
+  // update the channel led & play sample
   for (int i = 0; i <= 8; ++i) { // scan all the buttons
     if (button[i]) {
-      anybuttonpressed = true;
-      
       digitalWrite(led[i], 1);
       voice[i].sampleindex = 0; // trigger sample for this track
       voice[i].isPlaying = true;
     } else {
-      if (i < 6 && i != current_track) { // debug only
-      digitalWrite(led[i], 0);
+      // not a hit, turn it off, except for pin 7 in mode 1&2
+      if (i != current_track && display_mode == 0) { 
+        digitalWrite(led[i], 0);
       }
       //voice[i].isPlaying = false;
     }
   }
-  
+
+
+  // use encoder and button
+  if (encoder_delta) {
+    // mode 0, channel select
+    if ( display_mode == 0 && ! enc_button.pressed() )  {
+      // select a channel in mode one
+      current_track = current_track + encoder_delta;
+      constrain(current_track, 0, 7);
+    }
+
+    // mode 1, adjust pitch.
+    if ( display_mode == 1 ) {
+      int pitch_change = voice[current_track].sampleincrement + (encoder_delta * 10);
+      constrain(pitch_change, 2048, 8192);
+
+      // divisible by 2 and it won't click
+      if (pitch_change % 2 == 0) {
+        voice[current_track].sampleincrement = pitch_change;
+        // display_pitch = map(pitch, 2048, 8192, 0, 100);
+      }
+    }
+
+    // permits us to switch sample on channel in mode 2
+    if ( display_mode == 2 ) {
+      rp2040.idleOtherCore();
+      int result = voice[current_track].sample + encoder_delta;
+      if (result >= 0 && result <= NUM_SAMPLES - 1) {
+        voice[current_track].sample = result;
+      }
+      rp2040.resumeOtherCore();
+
+    }
+  }
+
+  /// only set new pos last after use of the delta
+  encoder_pos_last = encoder_pos;
+  encoder_delta = 0;  // we've used it
+
+  // start tracking time encoder button held
+  if (enc_button.pressed()) {
+    encoder_push_millis = now;
+    // switch mode
+    display_mode = display_mode + 1;
+    if ( display_mode > 2) { // switched back to play mode
+      display_mode = 0;
+    }
+  } else {
+    encoder_push_millis = 0;
+    encoder_held = false;
+  }
+
+
+
   /*
+     These are from the original scarp peakobeats
       if ( (encoder_pos != encoder_pos_last ) && display_mode == 1 ) {
         //uint8_t re = seq[i].trigger->getRepeats() + encoder_delta;
         seq[i].trigger->setRepeats(encoder_delta);
@@ -446,52 +497,6 @@ void loop() {
         voice[current_track].isPlaying = true;
       }
   */
-
-  // now, after buttons check if only encoder moved and no buttons
-  if ( encoder_delta && display_mode == 0 ) {
-    // select a channel
-    // a track button is pressed
-    current_track = current_track + encoder_delta;
-    constrain(current_track, 0, 7);
-  }      
-  
-  // button 8 is the encoder button
-  // change pitch, mode 1, encoder button depressed.
-  if ( ( encoder_delta) && button[8] && display_mode == 1 ) {
-    
-    int pitch_change = voice[current_track].sampleincrement + encoder_delta;
-    constrain(pitch_change, 0, 100);
-    // divisible by 2 and it won't click
-    if (pitch_change % 2 == 0) {
-      voice[current_track].sampleincrement = pitch_change;
-      // display_pitch = map(pitch, 2048, 8192, 0, 100);
-    }
-  }
-
-  // permits us to switch sample on channel
-  if ( ( encoder_delta ) && button[8] && display_mode == 2 ) {
-    rp2040.idleOtherCore();
-    int result = voice[current_track].sample + encoder_delta;
-    if (result >= 0 && result <= NUM_SAMPLES - 1) {
-      voice[current_track].sample = result;
-    }
-    rp2040.resumeOtherCore();
-
-  }
-
-
-  /// only set new pos last after buttons have had a chance to use the delta
-  encoder_pos_last = encoder_pos;
-  encoder_delta = 0;  // we've used it
-
-  // start tracking time encoder button held
-  if (button[8]) {
-    encoder_push_millis = now;
-  } else {
-    encoder_push_millis = 0;
-    encoder_held = false;
-  }
-
 }
 
 
@@ -555,11 +560,10 @@ void loop1() {
   digitalWrite(CPU_USE, 0); // low - CPU not busy
 #endif
 
-  //if ( canBufferAudioOutput() ) {
-    // write samples to DMA buffer - this is a blocking call so it stalls when buffer is full
-    DAC.write(int16_t(samplesum)); // left
-    DAC.write(int16_t(samplesum)); // left
-  //}
+  // write samples to DMA buffer - this is a blocking call so it stalls when buffer is full
+  DAC.write(int16_t(samplesum)); // left
+  DAC.write(int16_t(samplesum)); // left
+
 
 #ifdef MONITOR_CPU
   digitalWrite(CPU_USE, 1); // hi = CPU busy

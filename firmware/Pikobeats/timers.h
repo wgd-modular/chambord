@@ -1,4 +1,5 @@
-// timer functions
+// timer functions used to variously illuminate leds
+
 // These define's must be placed at the beginning before #include "TimerInterrupt_Generic.h"
 // _TIMERINTERRUPT_LOGLEVEL_ from 0 to 4
 #define _TIMERINTERRUPT_LOGLEVEL_     4
@@ -44,22 +45,31 @@ volatile  bool toggle_one  = false;
 volatile  bool toggle_two  = false;
 
 void b2mS() {
-
-}
-
-void b5mS() {
-  digitalWrite( led[current_track], 1);
-}
-
-void b7mS() {
-  if (timersUp) {
-    digitalWrite(led[7], 1);
-  }
   if (display_mode == 1) {
     digitalWrite(led[7], 1);
   }
 }
 
+void b5mS() {
+  digitalWrite( led[current_track], 1);
+  
+  if (display_mode == 2) {
+    digitalWrite(led[7], 1);
+  }
+  
+}
+
+void b7mS() {
+  if (display_mode == 1) {
+    digitalWrite(led[7], 0);
+  }
+
+}
+
 void b10mS() {
   digitalWrite( led[current_track], 0);
+  
+    if (display_mode == 2) {
+    digitalWrite(led[7], 0);
+  }
 }
