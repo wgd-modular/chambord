@@ -390,22 +390,24 @@ void loop() {
 
   // update encoder button state
   enc_button.update();
-  
+
   scanbuttons(); // actually jack inputs
-  
+
   // update the channel led & play sample
   for (int i = 0; i <= 8; ++i) { // scan all the buttons
     if (button[i]) {
       digitalWrite(led[i], 1);
+      //voice[i].isPlaying = false;
       voice[i].sampleindex = 0; // trigger sample for this track
       voice[i].isPlaying = true;
+      
     } else {
       // not a hit, turn it off, except for pin 7 in mode 1&2
-      if (i != current_track && display_mode == 0) { 
-        digitalWrite(led[i], 0); 
+      if (i != current_track && display_mode == 0) {
+        digitalWrite(led[i], 0);
       }
       if (i != current_track && i != 7 && display_mode != 0) {
-        digitalWrite(led[i], 0); 
+        digitalWrite(led[i], 0);
       }
       //voice[i].isPlaying = false;
     }
@@ -435,12 +437,12 @@ void loop() {
 
     // permits us to switch sample on channel in mode 2
     if ( display_mode == 2 ) {
-      rp2040.idleOtherCore();
+      //rp2040.idleOtherCore();
       int result = voice[current_track].sample + encoder_delta;
       if (result >= 0 && result <= NUM_SAMPLES - 1) {
         voice[current_track].sample = result;
       }
-      rp2040.resumeOtherCore();
+      //rp2040.resumeOtherCore();
 
     }
   }
