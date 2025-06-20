@@ -52,11 +52,11 @@ void b2mS() {
 
 void b5mS() {
   digitalWrite( led[current_track], 1);
-  
+
   if (display_mode == 2) {
     digitalWrite(led[7], 1);
   }
-  
+
 }
 
 void b7mS() {
@@ -68,8 +68,8 @@ void b7mS() {
 
 void b10mS() {
   digitalWrite( led[current_track], 0);
-  
-    if (display_mode == 2) {
+  encoder.tick(); // moved here to keep it quiet?
+  if (display_mode == 2) {
     digitalWrite(led[7], 0);
   }
 }

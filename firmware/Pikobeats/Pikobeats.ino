@@ -60,6 +60,20 @@ enum {
 
 int display_mode = MODE_PLAY;
 
+// on the long ec11 these are swapped A 19, B 18
+const int encoderA_pin = 19;
+const int encoderB_pin = 18;
+const int encoderSW_pin = 28;
+
+
+// encoder
+#include <RotaryEncoder.h>
+RotaryEncoder encoder(encoderB_pin, encoderA_pin, RotaryEncoder::LatchMode::FOUR3);
+
+void checkEncoderPosition() {
+  encoder.tick();   // call tick() to check the state.
+}
+
 // these are irq timers for handling led signals
 #include "timers.h"
 
@@ -94,7 +108,7 @@ Bounce2::Button enc_button = Bounce2::Button();
 
 // additions
 #include <Wire.h>
-#include <RotaryEncoder.h>
+
 
 // from pikocore for bpm calcs on clk input
 // this is unused, deprecate?
@@ -116,18 +130,6 @@ bool sync = false; // used to detect if we have input sync
 const int key_pins[] = { 0, 2, 4, 6, 8, 10, 12, 14 };
 const int led_pins[] = { 1, 3, 5, 7, 9, 11, 13, 15 };
 
-// on the long ec11 these are swapped A 19, B 18
-const int encoderA_pin = 19;
-const int encoderB_pin = 18;
-const int encoderSW_pin = 28;
-
-
-// encoder
-RotaryEncoder encoder(encoderB_pin, encoderA_pin, RotaryEncoder::LatchMode::FOUR3);
-
-void checkEncoderPosition() {
-  encoder.tick();   // call tick() to check the state.
-}
 
 // variables for UI state management
 int encoder_pos_last = 0;
@@ -366,7 +368,7 @@ void loop() {
 
   // UI handlers
   // first encoder
-  encoder.tick();
+  //encoder.tick(); moved to a timer to keep the noise down.
 
   int encoder_pos = encoder.getPosition();
   if ( (encoder_pos != encoder_pos_last )) {
@@ -403,10 +405,12 @@ void loop() {
       
     } else {
       // not a hit, turn it off, except for pin 7 in mode 1&2
+      /*
       if (i != current_track && display_mode == 0) {
         digitalWrite(led[i], 0);
-      }
-      if (i != current_track && i != 7 && display_mode != 0) {
+      }*/
+      //if (i != current_track && i != 7 && display_mode != 0) {
+       if ( ( display_mode != 0 && i !=7 ) || ( i != current_track && display_mode == 0 ) ) { 
         digitalWrite(led[i], 0);
       }
       //voice[i].isPlaying = false;
@@ -437,12 +441,12 @@ void loop() {
 
     // permits us to switch sample on channel in mode 2
     if ( display_mode == 2 ) {
-      //rp2040.idleOtherCore();
+      
       int result = voice[current_track].sample + encoder_delta;
       if (result >= 0 && result <= NUM_SAMPLES - 1) {
         voice[current_track].sample = result;
       }
-      //rp2040.resumeOtherCore();
+      
 
     }
   }
