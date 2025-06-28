@@ -3,10 +3,34 @@
 // These define's must be placed at the beginning before #include "TimerInterrupt_Generic.h"
 // _TIMERINTERRUPT_LOGLEVEL_ from 0 to 4
 #define _TIMERINTERRUPT_LOGLEVEL_     4
+#define TIMER0_INTERVAL_MS 20.833333333333
+// 48khz for the audio rate timer
+
 // Can be included as many times as necessary, without `Multiple Definitions` Linker Error
 #include "RPi_Pico_TimerInterrupt.h"
+
+volatile int counter = 0;
+
+// Init RPI_PICO_Timer, can use any from 0-15 pseudo-hardware timers
+RPI_PICO_Timer ITimer0(0);
+
+bool TimerHandler0(struct repeating_timer *t) {
+  (void) t;
+  bool sync = true;
+
+  if ( DAC.availableForWrite()) {
+    DAC.write(int16_t(samplesum)); // left
+    DAC.write(int16_t(samplesum)); // right
+    counter = 1;
+  }
+
+  return true;
+}
+
+
 // To be included only in main(), .ino with setup() to avoid `Multiple Definitions` Linker Error
 #include "RPi_Pico_ISR_Timer.h"
+
 //#include <SimpleTimer.h>
 
 bool timersUp = false;
@@ -14,7 +38,7 @@ bool timersUp = false;
 // 5ms = 200hz, 1ms 1000hz
 // 1ms = 1000Us
 // Init RPI_PICO_Timer
-RPI_PICO_Timer ITimer3(0);
+RPI_PICO_Timer ITimer3(3);
 
 // Init ISR_Timer
 // Each ISR_Timer can service 16 different ISR-based timers
@@ -46,8 +70,8 @@ volatile  bool toggle_two  = false;
 volatile  int16_t CV;
 
 void b2mS() {
-  
-  // update the channel led 
+
+  // update the channel led
   for (int i = 0; i <= 8; ++i) { // scan all the buttons
     if (button[i]) {
       digitalWrite(led[i], 1);
@@ -59,7 +83,7 @@ void b2mS() {
       }
     }
   }
-  
+
 }
 
 void b5mS() {
