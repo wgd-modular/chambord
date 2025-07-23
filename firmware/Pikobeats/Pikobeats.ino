@@ -435,8 +435,10 @@ void loop() {
     if ( display_mode == 0 && ! enc_button.pressed() )  {
       // select a channel in mode one
       // first reset level if CV is in use
-      voice[current_track].level = 800;
+      voice[current_track].level = 900;
+
       current_track = current_track + encoder_delta;
+      
       constrain(current_track, 0, 7);
 
     }
@@ -613,7 +615,7 @@ void loop1() {
           filtersum = (uint8_t)filter_lpf( (int64_t)samplesum, filter_fc ,filter_q);
        }
     */
-    counter = 0; // reset counter until the audio callback sets it again
+    counter = 0; // reset counter until the audio callback sets it again in timers.h
 
   }
 
