@@ -428,9 +428,10 @@ void loop() {
     if ( display_mode == 0 && ! enc_button.pressed() )  {
       // select a channel in mode one
 
-      current_track = current_track + encoder_delta;
+      // We add 8 to ensure we stay in positive range
+      current_track = (current_track + encoder_delta + 8) % 8;
       
-      constrain(current_track, 0, 7);
+      // constrain(current_track, 0, 7);
       // reset level if CV is in use
       
       voice[current_track].level = 800;
