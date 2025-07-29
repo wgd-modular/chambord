@@ -60,7 +60,7 @@ typedef void (*irqCallback)  ();
 
 #define TINTERVAL_2mS             2L
 #define TINTERVAL_5mS             5L
-#define TINTERVAL_7mS             7L
+#define TINTERVAL_7mS             7L // blue green 7, red green 6
 #define TINTERVAL_10mS            12L
 
 #define LED_INT_4_MS        4L
@@ -69,8 +69,54 @@ volatile  bool toggle_one  = false;
 volatile  bool toggle_two  = false;
 volatile  int16_t CV;
 
-void b2mS() {
 
+/* Red / Green Variant, red on */
+
+void b2mS() {
+  // update the channel led
+  for (int i = 0; i <= 8; ++i) { // scan all the buttons
+    if (button[i]) {
+      digitalWrite(led[i], 0);
+    } else {
+      if (i != current_track ) {
+        if ( ( display_mode != 0 && i != 7 ) || ( display_mode == 0 ) ) {
+          digitalWrite(led[i], 1);
+        }
+      }
+    }
+  }
+}
+void b5mS() {
+  if (display_mode == 2 ||  display_mode == 1) {
+    digitalWrite(led[7], 1);
+  }
+  if (voice[current_track].isPlaying == false) {
+    digitalWrite( led[current_track], 1);
+  }
+}
+void b7mS() {
+  if (display_mode == 2) {
+    digitalWrite(led[7], 0);
+  }
+}
+
+void b10mS() {
+  if (voice[current_track].isPlaying == false) {
+    digitalWrite( led[current_track], 0);
+  }
+  if (display_mode == 1) {
+    digitalWrite(led[7], 0);
+  }
+  CV = analogRead(A0);
+}
+
+
+
+
+/* Blue / Green Variant */
+
+/*
+void b2mS() {
   // update the channel led
   for (int i = 0; i <= 8; ++i) { // scan all the buttons
     if (button[i]) {
@@ -83,38 +129,28 @@ void b2mS() {
       }
     }
   }
-
 }
-
 void b5mS() {
-
-
   if (display_mode == 2 ||  display_mode == 1) {
     digitalWrite(led[7], 1);
   }
   if (voice[current_track].isPlaying == false) {
     digitalWrite( led[current_track], 1);
   }
-
 }
-
 void b7mS() {
   if (display_mode == 1) {
     digitalWrite(led[7], 0);
   }
-
-
-
 }
 
 void b10mS() {
-
   if (voice[current_track].isPlaying == false) {
     digitalWrite( led[current_track], 0);
   }
-
   if (display_mode == 2) {
     digitalWrite(led[7], 0);
   }
   CV = analogRead(A0);
 }
+*/

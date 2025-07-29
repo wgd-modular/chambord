@@ -61,7 +61,8 @@ bool debug = false;
 //#include "bbox.h"
 //#include "angularj.h"
 //#include "world.h"
-#include "acoustic3.h"
+//#include "acoustic3.h"
+#include "mix.h"
 
 // we can have an arbitrary number of samples but you will run out of memory at some point
 // sound sample files are 22khz 16 bit signed PCM format - see the sample include files for examples
@@ -100,8 +101,8 @@ enum {
 int display_mode = MODE_PLAY;
 
 // on the long ec11 these are swapped A 19, B 18
-const int encoderA_pin = 19;
-const int encoderB_pin = 18;
+const int encoderA_pin = 18;
+const int encoderB_pin = 19;
 const int encoderSW_pin = 28;
 
 
@@ -204,6 +205,9 @@ int16_t CV_last;
 
 //#define MONITOR_CPU  // define to monitor Core 2 CPU usage on pin CPU_USE
 
+// last time btn_one release
+unsigned long btnOneLastTime;
+int cv_track = 42; // used to assign a track CV modulation set out of bounds to start
 
 
 // sample and debounce
@@ -307,8 +311,7 @@ void setup() {
     if (debug) Serial.println(F("Can't set ITimer0. Select another freq. or timer"));
   }
 
-  // Just to demonstrate, don't use too many ISR Timers if not absolutely necessary
-  // You can use up to 16 timer for each ISR_Timer
+  // These are the timers that set the balance of green/red for feedback, hits, etc.
   ISR_timer.setInterval(TINTERVAL_2mS, b2mS);
   ISR_timer.setInterval(TINTERVAL_5mS, b5mS);
   ISR_timer.setInterval(TINTERVAL_7mS, b7mS);
@@ -324,6 +327,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(encoderA_pin), checkEncoderPosition, CHANGE);
   attachInterrupt(digitalPinToInterrupt(encoderB_pin), checkEncoderPosition, CHANGE);
   // Encoder button
+  
   enc_button.attach( SHIFTBUTTON, INPUT ); // USE EXTERNAL PULL-UP
   enc_button.interval(5); // 5ms debounce
   enc_button.setPressedState(LOW);
@@ -380,25 +384,13 @@ void loop() {
   uint32_t now = millis();
   scanbuttons(); // actually jack inputs
 
-  // update the channel led & play sample
+  // update the channel & play sample
   for (int i = 0; i <= 8; ++i) { // scan all the buttons
     if (button[i]) {
-      //digitalWrite(led[i], 1);
-      //voice[i].isPlaying = false;
+      //digitalWrite(led[i], 1); // we're doing the leds in timers.h
       voice[i].sampleindex = 0; // trigger sample for this track
       voice[i].isPlaying = true;
-
-    } else {
-      // not a hit, turn it off, except for pin 7 in mode 1&2
-      /*
-            if (i != current_track ) {
-              if ( ( display_mode != 0 && i != 7 ) || ( display_mode == 0 ) ) {
-                digitalWrite(led[i], 0);
-              }
-            }
-      */
     }
-
   }
 
   encoder.tick();
@@ -431,13 +423,17 @@ void loop() {
 
   // use encoder and button
   if (encoder_delta) {
+    
     // mode 0, channel select
     if ( display_mode == 0 && ! enc_button.pressed() )  {
       // select a channel in mode one
-      // first reset level if CV is in use
-      voice[current_track].level = 800;
+
       current_track = current_track + encoder_delta;
+      
       constrain(current_track, 0, 7);
+      // reset level if CV is in use
+      
+      voice[current_track].level = 800;
 
     }
 
@@ -449,13 +445,20 @@ void loop() {
       // divisible by 2 and it won't click
       if (pitch_change % 2 == 0) {
         voice[current_track].sampleincrement = pitch_change;
-        // display_pitch = map(pitch, 2048, 8192, 0, 100);
       }
     }
 
     // permits us to switch sample on channel in mode 2
     if ( display_mode == 2 ) {
-      int result = voice[current_track].sample + encoder_delta;
+      int result ;
+      if (encoder_delta > 0) {
+        result = voice[current_track].sample + 8 ;
+      } else {
+        result = voice[current_track].sample - 8 ;
+      }
+        
+      if (debug) Serial.println(result);
+      
       if (result >= 0 && result <= NUM_SAMPLES - 1) {
         voice[current_track].sample = result;
       }
@@ -466,8 +469,13 @@ void loop() {
   encoder_pos_last = encoder_pos;
   encoder_delta = 0;  // we've used it
 
-  // start tracking time encoder button held
-  if (enc_button.pressed()) {
+
+  // if button one was held for more than 75 millis set current track as CV track.
+  if (enc_button.rose()) {
+    btnOneLastTime = enc_button.previousDuration();
+    if (btnOneLastTime > 700) cv_track = current_track ;
+  } else if (enc_button.pressed() ) {
+    // start tracking time encoder button held
     encoder_push_millis = now;
     // switch mode
     display_mode = display_mode + 1;
@@ -481,9 +489,9 @@ void loop() {
 
   // change sample volume level on current_track with cv in.
   // ADC is on a timer
-  if (display_mode == 0) {
+  if (cv_track <= NUM_SAMPLES - 1) {
     if (CV != CV_last) {
-      voice[current_track].level = CV;
+      voice[cv_track].level = CV;
       CV_last = CV;
 
     }
@@ -613,7 +621,7 @@ void loop1() {
           filtersum = (uint8_t)filter_lpf( (int64_t)samplesum, filter_fc ,filter_q);
        }
     */
-    counter = 0; // reset counter until the audio callback sets it again
+    counter = 0; // reset counter until the audio callback sets it again in timers.h
 
   }
 
