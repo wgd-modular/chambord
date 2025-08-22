@@ -88,7 +88,7 @@ void b2mS() {
 }
 void b5mS() {
   if (display_mode == 2 ||  display_mode == 1) {
-    digitalWrite(led[7], 1);
+    digitalWrite(led[current_track], 1);
   }
   if (voice[current_track].isPlaying == false) {
     digitalWrite( led[current_track], 1);
@@ -96,7 +96,7 @@ void b5mS() {
 }
 void b7mS() {
   if (display_mode == 2) {
-    digitalWrite(led[7], 0);
+    digitalWrite(led[current_track], 0);
   }
 }
 
@@ -105,7 +105,7 @@ void b10mS() {
     digitalWrite( led[current_track], 0);
   }
   if (display_mode == 1) {
-    digitalWrite(led[7], 0);
+    digitalWrite(led[current_track], 0);
   }
   CV = analogRead(A0);
 }
