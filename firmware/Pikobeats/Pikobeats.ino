@@ -62,8 +62,9 @@ bool debug = false;
 //#include "angularj.h"
 //#include "world.h"
 //#include "acoustic3.h"
-//#include "mix.h"
-#include "tekke.h"
+#include "mix.h"
+//#include "tekke.h"
+
 // we can have an arbitrary number of samples but you will run out of memory at some point
 // sound sample files are 22khz 16 bit signed PCM format - see the sample include files for examples
 // you can change the sample rate to whatever you want but most testing was done at 22khz. 44khz probably works but not much testing was done

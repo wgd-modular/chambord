@@ -1,5 +1,5 @@
 
-#define NUM_VOICES 20
+#define NUM_VOICES 32
 
 struct voice_t {
   int16_t sample;   // index of the sample structure in sampledefs.h
@@ -8,37 +8,37 @@ struct voice_t {
   uint16_t sampleincrement; // 1:12 fixed point sample step for pitch changes
   bool isPlaying;  // true when sample is playing
 } voice[NUM_VOICES] = {
-  0,      // default voice 0 assignment - typically a kick but you can map them any way you want
-  900,  // initial level
-  1,    // sampleindex
-  4096, // initial pitch step - normal pitch
-  false, // sample not playing
-  1,900, 0, 4096, false,
-  2,900, 0, 4096, false, 
-  11,900, 0, 4096, false,
-  7,900, 0, 4096, false,
-  12,900, 0, 4096, false,
-  19,900, 0, 4096, false,
-  18,900, 0, 4096, false,
-  8,900, 0, 4096, false,
-  9,900, 0, 4096, false,
-  10,900, 0, 4096, false,
-  3,900, 0, 4096, false,
-  5,900, 0, 4096, false,
-  13,900, 0, 4096, false,
-  14,900, 0, 4096, false,
-  15,900, 0, 4096, false,
-  16,900, 0, 4096, false,
-  17,900, 0, 4096, false,
-  4,900, 0, 4096, false,
-  6,900, 0, 4096, false, 
-  /*20,900, 0, 4096, false, 
-  21,900, 0, 4096, false,
-  22,900, 0, 4096, false,
-  23,900, 0, 4096, false,
-  24,900, 0, 4096, false,
-  25,900, 0, 4096, false,
-  26,900, 0, 4096, false,
-  27,900, 0, 4096, false,*/
+  0,700, 0, 4096, false, //snr 10
+  1,700, 0, 4096, false, //snr 10
+  2,700, 0, 4096, false, //hfht
+  3,700, 0, 4096, false, //ohat 3
+  4,700, 0, 4096, false, //rim
+  5,700, 0, 4096, false, //sdst 07
+  6,700, 0, 4096, false, //tome 01
+  7,700, 0, 4096, false,  //clH
+  8,700, 0, 4096, false,
+  9,700, 0, 4096, false,
+  10,700, 0, 4096, false,
+  11,700, 0, 4096, false,
+  12,700, 0, 4096, false,
+  13,700, 0, 4096, false,
+  14,700, 0, 4096, false,
+  15,700, 0, 4096, false,
+  16,700, 0, 4096, false,
+  17,700, 0, 4096, false,
+  18,700, 0, 4096, false,
+  19,700, 0, 4096, false, 
+  20,700, 0, 4096, false, 
+  21,700, 0, 4096, false,
+  22,700, 0, 4096, false,
+  23,700, 0, 4096, false,
+  24,700, 0, 4096, false,
+  25,700, 0, 4096, false,
+  26,700, 0, 4096, false,
+  27,700, 0, 4096, false,
+  28,700, 0, 4096, false,
+  29,700, 0, 4096, false,
+  30,700, 0, 4096, false,
+  31,700, 0, 4096, false,
 };
 #include "80s/samples.h" // 808, mt40sr88sy1, sounds
