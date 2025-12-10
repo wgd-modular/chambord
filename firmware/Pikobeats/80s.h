@@ -8,37 +8,37 @@ struct voice_t {
   uint16_t sampleincrement; // 1:12 fixed point sample step for pitch changes
   bool isPlaying;  // true when sample is playing
 } voice[NUM_VOICES] = {
-  0,700, 0, 4096, false, //snr 10
-  1,700, 0, 4096, false, //snr 10
-  2,700, 0, 4096, false, //hfht
-  3,700, 0, 4096, false, //ohat 3
-  4,700, 0, 4096, false, //rim
-  5,700, 0, 4096, false, //sdst 07
-  6,700, 0, 4096, false, //tome 01
-  7,700, 0, 4096, false,  //clH
-  8,700, 0, 4096, false,
-  9,700, 0, 4096, false,
-  10,700, 0, 4096, false,
-  11,700, 0, 4096, false,
-  12,700, 0, 4096, false,
-  13,700, 0, 4096, false,
-  14,700, 0, 4096, false,
-  15,700, 0, 4096, false,
-  16,700, 0, 4096, false,
-  17,700, 0, 4096, false,
-  18,700, 0, 4096, false,
-  19,700, 0, 4096, false, 
-  20,700, 0, 4096, false, 
-  21,700, 0, 4096, false,
-  22,700, 0, 4096, false,
-  23,700, 0, 4096, false,
-  24,700, 0, 4096, false,
-  25,700, 0, 4096, false,
-  26,700, 0, 4096, false,
-  27,700, 0, 4096, false,
-  28,700, 0, 4096, false,
-  29,700, 0, 4096, false,
-  30,700, 0, 4096, false,
-  31,700, 0, 4096, false,
+  0,300, 0, 4096, false, //snr 10
+  1,300, 0, 4096, false, //snr 10
+  2,300, 0, 4096, false, //hfht
+  3,300, 0, 4096, false, //ohat 3
+  4,300, 0, 4096, false, //rim
+  5,300, 0, 4096, false, //sdst 07
+  6,300, 0, 4096, false, //tome 01
+  7,300, 0, 4096, false,  //clH
+  8,300, 0, 4096, false,
+  9,300, 0, 4096, false,
+  10,300, 0, 4096, false,
+  11,300, 0, 4096, false,
+  12,300, 0, 4096, false,
+  13,300, 0, 4096, false,
+  14,300, 0, 4096, false,
+  15,300, 0, 4096, false,
+  16,300, 0, 4096, false,
+  17,300, 0, 4096, false,
+  18,300, 0, 4096, false,
+  19,300, 0, 4096, false, 
+  20,300, 0, 4096, false, 
+  21,300, 0, 4096, false,
+  22,300, 0, 4096, false,
+  23,300, 0, 4096, false,
+  24,300, 0, 4096, false,
+  25,300, 0, 4096, false,
+  26,300, 0, 4096, false,
+  27,300, 0, 4096, false,
+  28,300, 0, 4096, false,
+  29,300, 0, 4096, false,
+  30,300, 0, 4096, false,
+  31,300, 0, 4096, false,
 };
 #include "80s/samples.h" // 808, mt40sr88sy1, sounds

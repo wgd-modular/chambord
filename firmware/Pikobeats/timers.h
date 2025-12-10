@@ -3,7 +3,10 @@
 // These define's must be placed at the beginning before #include "TimerInterrupt_Generic.h"
 // _TIMERINTERRUPT_LOGLEVEL_ from 0 to 4
 #define _TIMERINTERRUPT_LOGLEVEL_     4
-#define TIMER0_INTERVAL_MS 20.833333333333
+#define TIMER0_INTERVAL_MS 22.67573698 
+// 44100
+
+//20.833333333333
 // 48khz for the audio rate timer
 
 // Can be included as many times as necessary, without `Multiple Definitions` Linker Error
@@ -76,11 +79,11 @@ void b2mS() {
   // update the channel led
   for (int i = 0; i <= 8; ++i) { // scan all the buttons
     if (button[i]) {
-      digitalWrite(led[i], 1); // swap to 1 for blue green
+      digitalWrite(led[i], 0);
     } else {
       if (i != current_track ) {
         if ( ( display_mode != 0 && i != 7 ) || ( display_mode == 0 ) ) {
-          digitalWrite(led[i], 0); // swap to 0 for blue green
+          digitalWrite(led[i], 1);
         }
       }
     }

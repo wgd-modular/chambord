@@ -57,14 +57,15 @@ bool debug = false;
 // 80s only to 20, jungle to 29
 //we use a header per sample set
 //#include "80s.h"
-//#include "beatbox.h"
-//#include "bbox.h"
-//#include "angularj.h"
-//#include "world.h"
-//#include "acoustic3.h"
-#include "mix.h"
+#include "angularj.h"
+//#include "mix.h"
 //#include "tekke.h"
 
+// not ready
+//#include "world.h"
+//#include "acoustic3.h"
+//#include "beatbox.h"
+//#include "bbox.h"
 // we can have an arbitrary number of samples but you will run out of memory at some point
 // sound sample files are 22khz 16 bit signed PCM format - see the sample include files for examples
 // you can change the sample rate to whatever you want but most testing was done at 22khz. 44khz probably works but not much testing was done
@@ -75,20 +76,6 @@ bool debug = false;
 // the samples are arranged in alphabetical order to facilitate grouping samples by name - you can manually edit this file to change the order of the samples as needed
 // sampledefs.h contains other information not used by this program e.g. the name of the sample file - I wrote it for another project
 // wave2header also creates "samples.h" which #includes all the generated header files
-
-//#include "Jungle/samples.h"
-//#include "808samples/samples.h" // 808 sounds
-//#include "Angular_Jungle_Set/samples.h"   // Jungle soundfont set - great!
-//#include "Angular_Techno_Set/samples.h"   // Techno
-//#include "Acoustic3/samples.h"   // acoustic drums
-//#include "Pico_kit/samples.h"   // assorted samples
-//#include "testkit/samples.h"   // small kit for testing
-//#include "Trashrez/samples.h"
-//#include "world/samples.h"
-//#include "mt40sr88sy1/samples.h"
-//#include "kurzweill/samples.h"
-//#include "beatbox/samples.h"
-//#include "bbox/samples.h"
 
 
 #define NUM_SAMPLES (sizeof(sample)/sizeof(sample_t))
@@ -129,8 +116,8 @@ static void startAudio() {
   DAC.setBCLK(pBCLK);
   DAC.setDATA(pDOUT);
   DAC.setBitsPerSample(16);
-  DAC.setBuffers(4, 128, 0);
-  DAC.begin(48000);
+  DAC.setBuffers(4, 256, 0);
+  DAC.begin(44100);
 }
 
 static void stopAudio() {
@@ -358,8 +345,8 @@ void setup() {
   //pinMode(CLOCKOUT, OUTPUT);
   //pinMode(CLOCKIN, INPUT_PULLUP);
 
-  //pinMode(23, OUTPUT); // thi is to switch to PWM for power to avoid ripple noise
-  //digitalWrite(23, HIGH);
+  pinMode(23, OUTPUT); // thi is to switch to PWM for power to avoid ripple noise
+  digitalWrite(23, HIGH);
 
 
   // set up runningavg

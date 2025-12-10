@@ -1,5 +1,8 @@
 ## piko beats
 
+In order to render cleanly, using the timer driven method curently employed:
+Pico2, optimize -O3, overclock to 276mHz
+
 The samples are, still, prepared by the wav2header utility (windows, runs fine with wine64). The naming is a bit odd, still.
 
 There are four sets, a, b, c, d each of which have 8 files. so it's a1-instrument ( descriptive text ). This should be improved.

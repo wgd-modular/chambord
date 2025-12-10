@@ -1,4 +1,6 @@
- #define NUM_VOICES 32
+
+#define NUM_VOICES 32
+
 struct voice_t {
   int16_t sample;   // index of the sample structure in sampledefs.h
   int16_t level;   // 0-1000 for legacy reasons
@@ -39,13 +41,4 @@ struct voice_t {
   30,300, 0, 4096, false,
   31,300, 0, 4096, false,
 };
-#include "tekke/samples.h" // 4 kits in one
-
-/*             
-  int16_t sample;   // index of the sample structure in sampledefs.h
-  int16_t level;   // 0-1000 for legacy reasons
-  uint32_t sampleindex; // 20:12 fixed point index into the sample array
-  uint16_t sampleincrement; // 1:12 fixed point sample step for pitch changes
-  bool isPlaying;  // true when sample is playing
-                                      
-*/
+#include "tekke/samples.h" // from chambord

@@ -9,40 +9,40 @@ struct voice_t {
   bool isPlaying;  // true when sample is playing
 } voice[NUM_VOICES] = {
   0,      // default voice 0 assignment - typically a kick but you can map them any way you want
-  800,  // initial level
+  300,  // initial level
   1,    // sampleindex
   4096, // initial pitch step - normal pitch
   false, // sample not playing
-  1,800, 0, 4096, false, //snr 10
-  2,800, 0, 4096, false, //hfht
-  3,800, 0, 4096, false, //ohat 3
-  4,800, 0, 4096, false, //rim
-  5,800, 0, 4096, false, //sdst 07
-  6,800, 0, 4096, false, //tome 01
-  7,800, 0, 4096, false,  //clH
-  8,800, 0, 4096, false,
-  9,800, 0, 4096, false,
-  10,800, 0, 4096, false,
-  11,800, 0, 4096, false,
-  12,800, 0, 4096, false,
-  13,800, 0, 4096, false,
-  14,800, 0, 4096, false,
-  15,800, 0, 4096, false,
-  16,800, 0, 4096, false,
-  17,800, 0, 4096, false,
-  18,800, 0, 4096, false,
-  19,800, 0, 4096, false, 
-  20,800, 0, 4096, false, 
-  21,800, 0, 4096, false,
-  22,800, 0, 4096, false,
-  23,800, 0, 4096, false,
-  24,800, 0, 4096, false,
-  25,800, 0, 4096, false,
-  26,800, 0, 4096, false,
-  27,800, 0, 4096, false,
-  28,800, 0, 4096, false,
-  29,800, 0, 4096, false,
-  30,800, 0, 4096, false,
-  31,800, 0, 4096, false,
+  1,300, 0, 4096, false, //snr 10
+  2,300, 0, 4096, false, //hfht
+  3,300, 0, 4096, false, //ohat 3
+  4,300, 0, 4096, false, //rim
+  5,300, 0, 4096, false, //sdst 07
+  6,300, 0, 4096, false, //tome 01
+  7,300, 0, 4096, false,  //clH
+  8,300, 0, 4096, false,
+  9,300, 0, 4096, false,
+  10,300, 0, 4096, false,
+  11,300, 0, 4096, false,
+  12,300, 0, 4096, false,
+  13,300, 0, 4096, false,
+  14,300, 0, 4096, false,
+  15,300, 0, 4096, false,
+  16,300, 0, 4096, false,
+  17,300, 0, 4096, false,
+  18,300, 0, 4096, false,
+  19,300, 0, 4096, false, 
+  20,300, 0, 4096, false, 
+  21,300, 0, 4096, false,
+  22,300, 0, 4096, false,
+  23,300, 0, 4096, false,
+  24,300, 0, 4096, false,
+  25,300, 0, 4096, false,
+  26,300, 0, 4096, false,
+  27,300, 0, 4096, false,
+  28,300, 0, 4096, false,
+  29,300, 0, 4096, false,
+  30,300, 0, 4096, false,
+  31,300, 0, 4096, false,
 };
 #include "Angular_Jungle_Set/samples.h" // 808, mt40sr88sy1, sounds
