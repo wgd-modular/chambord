@@ -56,8 +56,10 @@ bool debug = false;
 // this structure holds the settings for each voice
 // 80s only to 20, jungle to 29
 //we use a header per sample set
+
+#include "trippy.h"
 //#include "80s.h"
-#include "angularj.h"
+//#include "angularj.h"
 //#include "mix.h"
 //#include "tekke.h"
 
