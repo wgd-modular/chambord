@@ -79,11 +79,11 @@ void b2mS() {
   // update the channel led
   for (int i = 0; i <= 8; ++i) { // scan all the buttons
     if (button[i]) {
-      digitalWrite(led[i], 0);
+      digitalWrite(led[i], 1);
     } else {
       if (i != current_track ) {
         if ( ( display_mode != 0 && i != 7 ) || ( display_mode == 0 ) ) {
-          digitalWrite(led[i], 1);
+          digitalWrite(led[i], 0);
         }
       }
     }
