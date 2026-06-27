@@ -1,0 +1,74 @@
+name: build firmware
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      release_tag:
+        description: "If set, upload the built .uf2 files to this release tag"
+        type: string
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        kit:
+          - { name: trippy,    flag: "" }
+          - { name: 80s,       flag: "-DCHAMBORD_KIT_80S" }
+          - { name: angularj,  flag: "-DCHAMBORD_KIT_ANGULARJ" }
+          - { name: mix,       flag: "-DCHAMBORD_KIT_MIX" }
+          - { name: tekke,     flag: "-DCHAMBORD_KIT_TEKKE" }
+          - { name: acoustic3, flag: "-DCHAMBORD_KIT_ACOUSTIC3" }
+        enc:
+          - { dir: "1",  suffix: "" }                    # normal encoder
+          - { dir: "-1", suffix: ".encoder_reversed" }   # reversed encoder
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install arduino-cli
+        uses: arduino/setup-arduino-cli@v2
+
+      - name: Install RP2350 core and libraries
+        run: |
+          arduino-cli config init --additional-urls https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
+          arduino-cli core update-index
+          arduino-cli core install rp2040:rp2040@5.6.1
+          arduino-cli lib install \
+            RotaryEncoder@1.5.3 \
+            Bounce2@2.71.0 \
+            RPi_Pico_TimerInterrupt@1.3.1
+
+      - name: Build ${{ matrix.kit.name }}${{ matrix.enc.suffix }}
+        run: |
+          arduino-cli compile \
+            -b rp2040:rp2040:rpipico2:freq=276,opt=Optimize3 \
+            --build-property "compiler.cpp.extra_flags=-DCHAMBORD_ENC_DIR=${{ matrix.enc.dir }} ${{ matrix.kit.flag }}" \
+            --output-dir out \
+            firmware/Pikobeats
+          mv out/Pikobeats.ino.uf2 "Pikobeats.${{ matrix.kit.name }}${{ matrix.enc.suffix }}.rp2350.uf2"
+
+      # Downloadable from the Actions run for every commit
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pikobeats.${{ matrix.kit.name }}${{ matrix.enc.suffix }}.rp2350
+          path: Pikobeats.${{ matrix.kit.name }}${{ matrix.enc.suffix }}.rp2350.uf2
+
+      # When called from the release workflow, attach the binaries to the release
+      - name: Upload to release
+        if: ${{ inputs.release_tag != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ inputs.release_tag }}" \
+            "Pikobeats.${{ matrix.kit.name }}${{ matrix.enc.suffix }}.rp2350.uf2" --clobber

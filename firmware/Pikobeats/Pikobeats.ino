@@ -52,22 +52,31 @@ bool debug = false;
 #include "euclid.h"
 #include "filter.h"
 
+#include <math.h>     // tanhf for the output soft-clip
+#include <EEPROM.h>   // flash-backed settings persistence
+
 // we have 8 voices that can play any sample when triggered
 // this structure holds the settings for each voice
 // 80s only to 20, jungle to 29
-//we use a header per sample set
-
-#include "trippy.h"
-//#include "80s.h"
-//#include "angularj.h"
-//#include "mix.h"
-//#include "tekke.h"
-
-// not ready
-//#include "world.h"
-//#include "acoustic3.h"
-//#include "beatbox.h"
-//#include "bbox.h"
+// we use a header per sample set
+//
+// Pick the sound kit at compile time. The CI builds one firmware per kit by
+// passing e.g. -DCHAMBORD_KIT_80S ; locally, define one of these (or leave the
+// default trippy). Each kit header defines voice_t/voice[] and pulls in its
+// own samples. ("not ready" kits world/beatbox/bbox have no sample data.)
+#if   defined(CHAMBORD_KIT_80S)
+  #include "80s.h"
+#elif defined(CHAMBORD_KIT_ANGULARJ)
+  #include "angularj.h"
+#elif defined(CHAMBORD_KIT_MIX)
+  #include "mix.h"
+#elif defined(CHAMBORD_KIT_TEKKE)
+  #include "tekke.h"
+#elif defined(CHAMBORD_KIT_ACOUSTIC3)
+  #include "acoustic3.h"
+#else
+  #include "trippy.h"
+#endif
 // we can have an arbitrary number of samples but you will run out of memory at some point
 // sound sample files are 22khz 16 bit signed PCM format - see the sample include files for examples
 // you can change the sample rate to whatever you want but most testing was done at 22khz. 44khz probably works but not much testing was done
@@ -82,13 +91,24 @@ bool debug = false;
 
 #define NUM_SAMPLES (sizeof(sample)/sizeof(sample_t))
 
+// What turning the encoder does. Press the encoder to step through these
+// for the currently selected channel: select -> sample -> volume -> pitch.
 enum {
-  MODE_PLAY = 0,
-  MODE_CONFIG,
-  MODE_COUNT   // how many modes we got
+  MODE_SELECT = 0, // turn = choose channel (1-8)
+  MODE_SAMPLE,     // turn = change the sample of the selected channel
+  MODE_VOLUME,     // turn = change the volume of the selected channel
+  MODE_PITCH,      // turn = change the pitch of the selected channel
+  MODE_COUNT
 };
 
-int display_mode = MODE_PLAY;
+int display_mode = MODE_SELECT;
+
+// Encoder direction. 1 = normal, -1 = inverted. The CI builds both variants by
+// passing -DCHAMBORD_ENC_DIR=... ; to change it locally edit the default below.
+#ifndef CHAMBORD_ENC_DIR
+#define CHAMBORD_ENC_DIR 1
+#endif
+const int ENCODER_DIR = CHAMBORD_ENC_DIR;
 
 // on the long ec11 these are swapped A 19, B 18
 const int encoderA_pin = 18;
@@ -100,7 +120,7 @@ const int encoderSW_pin = 28;
 #include <RotaryEncoder.h>
 RotaryEncoder encoder(encoderB_pin, encoderA_pin, RotaryEncoder::LatchMode::FOUR3);
 
-void checkEncoderPosition() {
+void __not_in_flash_func(checkEncoderPosition)() {
   encoder.tick();   // call tick() to check the state.
 }
 
@@ -128,8 +148,6 @@ static void stopAudio() {
 inline bool canBufferAudioOutput() {
   return (DAC.availableForWrite());
 }
-
-int32_t samplesum = 0; // needed by timer0
 
 // these are irq timers for handling led signals
 #include "timers.h"
@@ -254,6 +272,128 @@ bool scanbuttons(void)
 
 #include "seq.h"
 
+// ---------------------------------------------------------------------------
+// Audio mixing: precomputed per-voice gain + attack ramp (anti-click)
+// ---------------------------------------------------------------------------
+#define RAMP_LEN 48                 // ~1.1ms attack at 44.1kHz to kill retrigger clicks
+int32_t  voice_gain[NTRACKS];       // Q15 gain (level/1000) precomputed so the mix loop has no divide
+uint16_t voice_ramp[NTRACKS];       // attack ramp counter per track, counts up to RAMP_LEN
+
+// set a track level (0-1000) and recompute its Q15 mix gain
+inline void setLevel(int track, int level) {
+  if (level < 0) level = 0;
+  if (level > 1000) level = 1000;
+  voice[track].level = level;
+  voice_gain[track] = ((int32_t)level * 32768) / 1000;
+}
+
+// ---------------------------------------------------------------------------
+// Settings persistence to flash (survives power cycle)
+// stored: per-track sample + pitch, plus CV/selected track
+// ---------------------------------------------------------------------------
+#define EE_MAGIC 0xB4
+#define EE_SIZE  256
+struct persist_t {
+  uint8_t  magic;
+  uint8_t  cv_track;
+  uint8_t  current_track;
+  int16_t  sample[NTRACKS];
+  uint16_t incr[NTRACKS];
+  int16_t  level[NTRACKS];
+};
+
+bool     settings_dirty = false;
+uint32_t settings_change_ms = 0;
+inline void markDirty() { settings_dirty = true; settings_change_ms = millis(); }
+
+void loadSettings() {
+  persist_t p;
+  EEPROM.get(0, p);
+  if (p.magic != EE_MAGIC) return;            // nothing valid stored yet
+  cv_track = p.cv_track;
+  current_track = p.current_track % NTRACKS;
+  for (int t = 0; t < NTRACKS; ++t) {
+    if (p.sample[t] >= 0 && p.sample[t] < (int)NUM_SAMPLES) voice[t].sample = p.sample[t];
+    voice[t].sampleincrement = constrain(p.incr[t], 2048, 8192);
+    setLevel(t, p.level[t]);
+  }
+}
+
+void saveSettings() {
+  persist_t p;
+  p.magic = EE_MAGIC;
+  p.cv_track = cv_track;
+  p.current_track = current_track;
+  for (int t = 0; t < NTRACKS; ++t) {
+    p.sample[t] = voice[t].sample;
+    p.incr[t]   = voice[t].sampleincrement;
+    p.level[t]  = voice[t].level;
+  }
+  EEPROM.put(0, p);
+  EEPROM.commit();   // idles core1 internally during the flash erase/program
+}
+
+// ---------------------------------------------------------------------------
+// Unified LED feedback engine
+// Each LED is a single GPIO over a dual-colour part: GPIO low = red (floor),
+// high = green, and a duty cycle in between = amber. ledRender() does software
+// PWM from led_duty[]; updateUI() sets led_duty[] from the current UI state.
+// ---------------------------------------------------------------------------
+#define LED_LEVELS 8        // PWM steps -> 1ms tick gives ~125Hz refresh
+#define LED_RED    0        // GPIO mostly low  -> red (also the idle floor colour)
+#define LED_AMBER  4        // ~50% duty        -> amber
+#define LED_GREEN  8        // GPIO high        -> green
+
+volatile uint8_t led_duty[8] = {0};
+volatile uint8_t led_phase = 0;
+
+// software PWM, called every 1ms from the ISR timer (kept in RAM so it never
+// waits on the flash bus that the audio core is reading samples from)
+void __not_in_flash_func(ledRender)() {
+  uint8_t ph = led_phase;
+  for (int i = 0; i < 8; ++i) {
+    digitalWrite(led[i], (led_duty[i] > ph) ? HIGH : LOW);
+  }
+  led_phase = (ph + 1) % LED_LEVELS;
+}
+
+// When the encoder hasn't been touched for this long, the row turns into a
+// trigger-activity display ("screensaver"). While you ARE editing, the row
+// shows only the selected channel's page so nothing distracts you.
+#define SCREENSAVER_MS 10000
+uint32_t ui_activity_ms = 0;
+
+// Recompute per-channel LED colours. While editing, feedback lives only on the
+// selected channel's own LED, colour-coded by page (green = choosing a thing,
+// amber = setting an amount):
+//   green steady   = SELECT  (turn to pick the channel)
+//   green blinking = SAMPLE  (turn to change the sample)
+//   amber steady   = VOLUME  (turn to change the volume)
+//   amber blinking = PITCH   (turn to change the pitch)
+// After SCREENSAVER_MS idle, every channel flashes green on a trigger instead.
+// Throttled by the caller (~5ms) so it doesn't hog the flash bus.
+void updateUI() {
+  uint32_t now = millis();
+  bool blink = (now / 150) & 1; // ~3 Hz
+  bool screensaver = (now - ui_activity_ms) > SCREENSAVER_MS;
+
+  for (int i = 0; i < 8; ++i) {
+    uint8_t d = LED_RED; // idle floor
+
+    if (screensaver) {
+      if (voice[i].isPlaying) d = LED_GREEN;          // trigger-activity display
+    } else if (i == current_track) {
+      switch (display_mode) {
+        case MODE_SELECT: d = LED_GREEN;                  break; // green steady
+        case MODE_SAMPLE: d = blink ? LED_GREEN : LED_RED; break; // green blink
+        case MODE_VOLUME: d = LED_AMBER;                  break; // amber steady
+        case MODE_PITCH:  d = blink ? LED_AMBER : LED_RED; break; // amber blink
+      }
+    }
+    led_duty[i] = d;
+  }
+}
+
 #define DISPLAY_TIME 2000 // time in ms to display numbers on LEDS
 int32_t display_timer;
 
@@ -293,19 +433,11 @@ void setup() {
   }
   analogReadResolution(10);
 
-  // This is the timer for audio rate rendering:
-  if (ITimer0.attachInterruptInterval(TIMER0_INTERVAL_MS, TimerHandler0)) // that's 48kHz
-  {
-    if (debug) Serial.print(F("Starting  ITimer0 OK, millis() = ")); Serial.println(millis());
-  }  else {
-    if (debug) Serial.println(F("Can't set ITimer0. Select another freq. or timer"));
-  }
+  // Audio is rendered free-running on core1 and paced by the I2S DMA buffer
+  // (DAC.write blocks when full), so no dedicated audio-rate timer is needed.
 
-  // These are the timers that set the balance of green/red for feedback, hits, etc.
-  ISR_timer.setInterval(TINTERVAL_2mS, b2mS);
-  ISR_timer.setInterval(TINTERVAL_5mS, b5mS);
-  ISR_timer.setInterval(TINTERVAL_7mS, b7mS);
-  ISR_timer.setInterval(TINTERVAL_10mS, b10mS);
+  // single LED software-PWM renderer (replaces the old b2/b5/b7/b10 handlers)
+  ISR_timer.setInterval(1L, ledRender);
 
 
   if (debug) Serial.flush();
@@ -361,6 +493,14 @@ void setup() {
   */
   //display_value(NUM_SAMPLES); // show number of samples on the display
 
+  // init per-voice mix gains and ramps, then restore saved settings from flash
+  for (int t = 0; t < NTRACKS; ++t) {
+    setLevel(t, voice[t].level);
+    voice_ramp[t] = RAMP_LEN;   // not ramping until first trigger
+  }
+  EEPROM.begin(EE_SIZE);
+  loadSettings();
+
   startAudio();
 
 }
@@ -375,11 +515,12 @@ void loop() {
   scanbuttons(); // actually jack inputs
 
   // update the channel & play sample
-  for (int i = 0; i <= 8; ++i) { // scan all the buttons
+  for (int i = 0; i < NTRACKS; ++i) { // scan all the trigger inputs (not the encoder button)
     if (button[i]) {
       //digitalWrite(led[i], 1); // we're doing the leds in timers.h
       voice[i].sampleindex = 0; // trigger sample for this track
       voice[i].isPlaying = true;
+      voice_ramp[i] = 0; // restart attack ramp -> click-free retrigger
     }
   }
 
@@ -387,7 +528,7 @@ void loop() {
 
   int encoder_pos = encoder.getPosition();
   if ( (encoder_pos != encoder_pos_last )) {
-    encoder_delta = encoder_pos - encoder_pos_last;
+    encoder_delta = (encoder_pos - encoder_pos_last) * ENCODER_DIR;
   }
 
   // set play mode 0 play 1 edit pitch, 2 edit channel sample,
@@ -413,46 +554,42 @@ void loop() {
 
   // use encoder and button
   if (encoder_delta) {
-    
-    // mode 0, channel select
-    if ( display_mode == 0 && ! enc_button.pressed() )  {
-      // select a channel in mode one
+    ui_activity_ms = now; // wake the display out of screensaver
 
-      // We add 8 to ensure we stay in positive range
+    // MODE_SELECT: turn to choose which channel (1-8) you're working on
+    if ( display_mode == MODE_SELECT && ! enc_button.pressed() )  {
+      // +8 keeps us in positive range for the modulo
       current_track = (current_track + encoder_delta + 8) % 8;
-      
-      // constrain(current_track, 0, 7);
-      // reset level if CV is in use
-      
-      voice[current_track].level = 300;
-
+      // NOTE: selecting a channel no longer changes its volume (that caused clicks)
     }
 
-    // mode 1, adjust pitch.
-    if ( display_mode == 1 ) {
-      int pitch_change = voice[current_track].sampleincrement - (encoder_delta * 10);
-      constrain(pitch_change, 2048, 8192);
-
-      // divisible by 2 and it won't click
-      if (pitch_change % 2 == 0) {
-        voice[current_track].sampleincrement = pitch_change;
-      }
-    }
-
-    // permits us to switch sample on channel in mode 2
-    if ( display_mode == 2 ) {
-      int result ;
-      if (encoder_delta > 0) {
-        result = voice[current_track].sample + 8 ;
-      } else {
-        result = voice[current_track].sample - 8 ;
-      }
-        
+    // MODE_SAMPLE: turn to change the sample of the selected channel
+    if ( display_mode == MODE_SAMPLE ) {
+      int result = voice[current_track].sample + (encoder_delta > 0 ? 8 : -8);
       if (debug) Serial.println(result);
-      
       if (result >= 0 && result <= NUM_SAMPLES - 1) {
         voice[current_track].sample = result;
+        voice_ramp[current_track] = 0; // re-attack to soften the swap if it's ringing
+        markDirty();
       }
+    }
+
+    // MODE_VOLUME: turn to change the volume of the selected channel
+    if ( display_mode == MODE_VOLUME ) {
+      setLevel(current_track, voice[current_track].level + encoder_delta * 50);
+      markDirty();
+    }
+
+    // MODE_PITCH: turn to change the pitch of the selected channel.
+    // Unity = 4096 (1:12 fixed point); 2048..8192 spans one octave down..up.
+    // 128/detent (~2.6 detents per semitone) - the old step of 10 was so tiny
+    // (~0.24%/detent) that it felt like nothing happened.
+    if ( display_mode == MODE_PITCH ) {
+      int pitch_change = voice[current_track].sampleincrement + (encoder_delta * 128);
+      pitch_change = constrain(pitch_change, 2048, 8192); // constrain returns a value, must assign
+      pitch_change &= ~1;                                 // keep even -> no click
+      voice[current_track].sampleincrement = pitch_change;
+      markDirty();
     }
   }
 
@@ -461,31 +598,53 @@ void loop() {
   encoder_delta = 0;  // we've used it
 
 
-  // if button one was held for more than 75 millis set current track as CV track.
+  // Encoder button:
+  //   short press  -> step turn-function: select -> pitch -> sample -> select
+  //   long press (>700ms) -> toggle CV control of the selected channel's volume
   if (enc_button.rose()) {
+    ui_activity_ms = now;
     btnOneLastTime = enc_button.previousDuration();
-    if (btnOneLastTime > 700) cv_track = current_track ;
-  } else if (enc_button.pressed() ) {
-    // start tracking time encoder button held
-    encoder_push_millis = now;
-    // switch mode
-    display_mode = display_mode + 1;
-    if ( display_mode > 2) { // switched back to play mode
-      display_mode = 0;
+    if (btnOneLastTime > 700) {
+      cv_track = (cv_track == current_track) ? 99 : current_track; // 99 = CV off
+      markDirty();
     }
+  } else if (enc_button.pressed() ) {
+    ui_activity_ms = now;
+    encoder_push_millis = now;
+    display_mode = display_mode + 1;
+    if ( display_mode >= MODE_COUNT) display_mode = MODE_SELECT;
   } else {
     encoder_push_millis = 0;
     encoder_held = false;
   }
 
-  // change sample volume level on current_track with cv in.
-  // ADC is on a timer
-  if (cv_track <= NUM_SAMPLES - 1) {
-    if (CV != CV_last) {
-      constrain(CV,0, 350);
-      voice[cv_track].level = CV;
-      CV_last = CV;
+  // CV input modulates the volume of the assigned channel (if any).
+  // CV-driven volume is intentionally NOT persisted (would wear flash).
+  if (cv_track < NTRACKS) {
+    int16_t cvv = CV;
+    if (cvv != CV_last) {
+      setLevel(cv_track, constrain(cvv, 0, 350));
+      CV_last = cvv;
+    }
+  }
 
+  // Refresh UI + sample CV at ~200Hz (throttled so core0 doesn't starve the
+  // audio core's flash reads -> this was a source of pops while turning).
+  static uint32_t ui_last = 0;
+  if (now - ui_last >= 5) {
+    ui_last = now;
+    CV = analogRead(A0);
+    updateUI();
+  }
+
+  // Debounced auto-save, but only while nothing is sounding, so the brief
+  // audio pause during the flash write happens in silence (no pop).
+  if (settings_dirty && (now - settings_change_ms) > 1500) {
+    bool anyPlaying = false;
+    for (int i = 0; i < NTRACKS; ++i) if (voice[i].isPlaying) { anyPlaying = true; break; }
+    if (!anyPlaying) {
+      saveSettings();
+      settings_dirty = false;
     }
   }
 
@@ -529,31 +688,6 @@ void loop() {
   */
 }
 
-void update_leds() {
-  // update the channel led & play sample
-  for (int i = 0; i <= 8; ++i) { // scan all the buttons
-    if (button[i]) {
-      digitalWrite(led[i], 1);
-      //voice[i].isPlaying = false;
-      voice[i].sampleindex = 0; // trigger sample for this track
-      voice[i].isPlaying = true;
-
-    } else {
-      // not a hit, turn it off, except for pin 7 in mode 1&2
-      /*
-        if (i != current_track && display_mode == 0) {
-        digitalWrite(led[i], 0);
-        }*/
-      if (i != current_track ) {
-        if ( ( display_mode != 0 && i != 7 ) || ( display_mode == 0 ) ) {
-          digitalWrite(led[i], 0);
-        }
-      }
-      //voice[i].isPlaying = false;
-    }
-  }
-}
-
 
 
 // second core setup
@@ -562,59 +696,52 @@ void setup1() {
   delay (2000); // wait for main core to start up perhipherals
 }
 
-// second core calculates samples and sends to DAC
-void loop1() {
+// render a single output frame by mixing all playing voices
+// (resampling with linear interpolation, precomputed gain, attack ramp,
+//  then tanh soft-clip for headroom instead of a hard clip)
+int16_t __not_in_flash_func(renderAudioFrame)() {
+  int32_t samplesum = 0;
 
-  // check if we have a new bpm value from interrupt
-  // since debouncing is flaky, force more than 1 bpm diff
-  //if (ra.Value() != bpm && ra.Value() > 49) {
-  /* if (RPM > bpm + 1 || RPM < bpm -1 && RPM > 49) {
-         //reset = true; //reset seq
-         bpm = RPM;
-    }
-    do_clocks();  // process sequencer clocks
+  /* oct 22 2023 resampling code
+     to change pitch we step through the sample by .5 rate for half pitch up to 2 for double pitch
+     sample.sampleindex is a fixed point 20:12 fractional number
+     we step through the sample array by sampleincrement - sampleincrement is treated as a 1 bit integer and a 12 bit fraction
+     for sample lookup sample.sampleindex is converted to a 20 bit integer which limits the max sample size to 2**20 or about 1 million samples, about 45 seconds
   */
-
-
-  if (counter == 1) { // don't calculate too quickly
-    samplesum = 0;
-    int32_t newsample, filtersum;
-    uint32_t index;
-    int16_t samp0, samp1, delta, tracksample;
-
-    /* oct 22 2023 resampling code
-       to change pitch we step through the sample by .5 rate for half pitch up to 2 for double pitch
-       sample.sampleindex is a fixed point 20:12 fractional number
-       we step through the sample array by sampleincrement - sampleincrement is treated as a 1 bit integer and a 12 bit fraction
-       for sample lookup sample.sampleindex is converted to a 20 bit integer which limits the max sample size to 2**20 or about 1 million samples, about 45 seconds
-    */
-    for (int track = 0; track < NTRACKS; ++track) { // look for samples that are playing, scale their volume, and add them up
-      tracksample = voice[track].sample; // precompute for a little more speed below
-      index = voice[track].sampleindex >> 12; // get the integer part of the sample increment
-      if (index >= sample[tracksample].samplesize) voice[track].isPlaying = false; // have we played the whole sample?
-      if (voice[track].isPlaying) { // if sample is still playing, do interpolation
-        samp0 = sample[tracksample].samplearray[index]; // get the first sample to interpolate
-        samp1 = sample[tracksample].samplearray[index + 1]; // get the second sample
-        delta = samp1 - samp0;
-        newsample = (int32_t)samp0 + ((int32_t)delta * ((int32_t)voice[track].sampleindex & 0x0fff)) / 4096; // interpolate between the two samples
-        //samplesum+=((int32_t)samp0+(int32_t)delta*(sample[i].sampleindex & 0x0fff)/4096)*sample[i].play_volume;
-        samplesum += (newsample * (127 * voice[track].level)) / 1000;
-        voice[track].sampleindex += voice[track].sampleincrement; // add step increment
-      }
+  for (int track = 0; track < NTRACKS; ++track) { // look for samples that are playing, scale their volume, and add them up
+    if (!voice[track].isPlaying) continue;
+    int16_t tracksample = voice[track].sample;
+    uint32_t index = voice[track].sampleindex >> 12; // integer part of the fixed-point index
+    // stop one sample early so the index+1 interpolation read stays in bounds
+    if (index >= sample[tracksample].samplesize - 1) {
+      voice[track].isPlaying = false;
+      continue;
     }
+    int16_t samp0 = sample[tracksample].samplearray[index];     // first sample to interpolate
+    int16_t samp1 = sample[tracksample].samplearray[index + 1]; // second sample
+    int32_t delta = samp1 - samp0;
+    int32_t newsample = (int32_t)samp0 + (delta * (int32_t)(voice[track].sampleindex & 0x0fff)) / 4096; // interpolate
 
-    samplesum = samplesum >> 7; // adjust for play_volume multiply above
-    if  (samplesum > 32767) samplesum = 32767; // clip if sample sum is too large
-    if  (samplesum < -32767) samplesum = -32767;
-
-    /*
-        // filter
-      if (filter_fc <=  LPF_MAX) {
-          filtersum = (uint8_t)filter_lpf( (int64_t)samplesum, filter_fc ,filter_q);
-       }
-    */
-    counter = 0; // reset counter until the audio callback sets it again in timers.h
-
+    int32_t s = ((int32_t)newsample * voice_gain[track]) >> 15; // apply precomputed Q15 gain (no per-sample divide)
+    if (voice_ramp[track] < RAMP_LEN) {                          // brief attack ramp suppresses retrigger clicks
+      s = (s * voice_ramp[track]) / RAMP_LEN;
+      voice_ramp[track]++;
+    }
+    samplesum += s;
+    voice[track].sampleindex += voice[track].sampleincrement;    // advance by pitch step
   }
 
+  // headroom + soft clip: a single full-level hit passes ~unchanged while
+  // simultaneous voices saturate smoothly through tanh instead of hard-clipping.
+  float norm = samplesum * (1.0f / 32767.0f);
+  return (int16_t)(tanhf(norm) * 32767.0f);
+}
+
+// second core calculates samples and sends them to the DAC.
+// DAC.write() blocks on the I2S DMA ring buffer, which paces this loop at the
+// sample rate, so no separate audio-rate timer is required.
+void __not_in_flash_func(loop1)() {
+  int16_t out = renderAudioFrame();
+  DAC.write(out); // left
+  DAC.write(out); // right
 }
