@@ -115,7 +115,6 @@ const int encoderA_pin = 18;
 const int encoderB_pin = 19;
 const int encoderSW_pin = 28;
 
-#define DOUBLE_CLICK_THRESHOLD 400 
 // encoder
 #include <RotaryEncoder.h>
 RotaryEncoder encoder(encoderB_pin, encoderA_pin, RotaryEncoder::LatchMode::FOUR3);
@@ -152,11 +151,17 @@ inline bool canBufferAudioOutput() {
 // these are irq timers for handling led signals
 #include "timers.h"
 
-
+#define LONG_PRESS_THRESHOLD 1000  // 1 second
+#define DOUBLE_CLICK_THRESHOLD 400  // 400ms max delay between clicks
 
 // encoder button
 #include <Bounce2.h>
 Bounce2::Button enc_button = Bounce2::Button();
+unsigned long pressStartTime = 0;
+unsigned long lastPressTime = 0;
+bool longPressTriggered = false;
+bool awaitingDoubleClick = false;
+bool singleClickPending = false;
 
 // additions
 #include <Wire.h>
@@ -446,7 +451,7 @@ void setup() {
   // Encoder button
   
   enc_button.attach( SHIFTBUTTON, INPUT ); // USE EXTERNAL PULL-UP
-  enc_button.interval(5); // 5ms debounce
+  enc_button.interval(50); // 5ms debounce
   enc_button.setPressedState(LOW);
 
 #ifdef MONITOR_CPU
@@ -569,14 +574,68 @@ void loop() {
   encoder_pos_last = encoder_pos;
   encoder_delta = 0;  // we've used it
 
+    // Detect long press
+    if (enc_button.isPressed()) {
+        if (pressStartTime == 0) {
+            pressStartTime = millis();
+        }
+        if ((millis() - pressStartTime > LONG_PRESS_THRESHOLD) && !longPressTriggered) {
+          longPressTriggered = true;
+          if (longPressTriggered) {
+            cv_track = (cv_track == current_track) ? 99 : current_track; // 99 = CV off
+            markDirty();
+          }
+        }
+    }
+
+    // Detect button release
+    if (enc_button.released()) {
+        unsigned long pressDuration = millis() - pressStartTime;
+
+        if (!longPressTriggered) {
+            if (awaitingDoubleClick && (millis() - lastPressTime < DOUBLE_CLICK_THRESHOLD)) {
+              // doubleClick detected
+                awaitingDoubleClick = false;
+                singleClickPending = false;
+
+                if (settings_dirty ) {
+                  bool anyPlaying = false;
+                  for (int i = 0; i < NTRACKS; ++i) if (voice[i].isPlaying) { anyPlaying = true; break; }
+                  if (!anyPlaying ) {
+                    saveSettings();
+                    settings_dirty = false;
+                  }
+                }
+            } else {
+                awaitingDoubleClick = true;
+                lastPressTime = millis();
+                singleClickPending = true;
+            }
+        }
+
+        pressStartTime = 0;
+        longPressTriggered = false;
+    }
+
+    // Confirm single click after timeout
+    if (singleClickPending && (millis() - lastPressTime > DOUBLE_CLICK_THRESHOLD)) {
+        singleClickPending = false;
+        awaitingDoubleClick = false;
+        ui_activity_ms = now;
+        encoder_push_millis = now;
+        display_mode = display_mode + 1;
+        if ( display_mode >= MODE_COUNT) display_mode = MODE_SELECT;
+    }
 
   // Encoder button:
   //   short press  -> step turn-function: select -> pitch -> sample -> select
   //   long press (>700ms) -> toggle CV control of the selected channel's volume
+    /*
   if (enc_button.rose()) {
     ui_activity_ms = now;
-    btnOneLastTime = enc_button.previousDuration();
-    if (btnOneLastTime > 700) {
+    //btnOneLastTime = enc_button.previousDuration();
+    //if (btnOneLastTime > 700) {
+    if (longPressTriggered) {
       cv_track = (cv_track == current_track) ? 99 : current_track; // 99 = CV off
       markDirty();
     }
@@ -589,6 +648,7 @@ void loop() {
     encoder_push_millis = 0;
     encoder_held = false;
   }
+  */
 
   // CV input modulates the volume of the assigned channel (if any).
   // CV-driven volume is intentionally NOT persisted (would wear flash).
@@ -611,6 +671,7 @@ void loop() {
 
   // Debounced auto-save, but only while nothing is sounding, so the brief
   // audio pause during the flash write happens in silence (no pop).
+  /*
   if (settings_dirty && (now - settings_change_ms) > 1500) {
     bool anyPlaying = false;
     for (int i = 0; i < NTRACKS; ++i) if (voice[i].isPlaying) { anyPlaying = true; break; }
@@ -618,7 +679,7 @@ void loop() {
       saveSettings();
       settings_dirty = false;
     }
-  }
+  }*/
 
 
 
