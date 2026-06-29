@@ -115,7 +115,7 @@ const int encoderA_pin = 18;
 const int encoderB_pin = 19;
 const int encoderSW_pin = 28;
 
-
+#define DOUBLE_CLICK_THRESHOLD 400 
 // encoder
 #include <RotaryEncoder.h>
 RotaryEncoder encoder(encoderB_pin, encoderA_pin, RotaryEncoder::LatchMode::FOUR3);
@@ -355,7 +355,7 @@ void __not_in_flash_func(ledRender)() {
 // When the encoder hasn't been touched for this long, the row turns into a
 // trigger-activity display ("screensaver"). While you ARE editing, the row
 // shows only the selected channel's page so nothing distracts you.
-#define SCREENSAVER_MS 10000
+#define SCREENSAVER_MS 3000
 uint32_t ui_activity_ms = 0;
 
 // Recompute per-channel LED colours. While editing, feedback lives only on the
@@ -518,21 +518,6 @@ void loop() {
     encoder_delta = (encoder_pos - encoder_pos_last) * ENCODER_DIR;
   }
 
-  // set play mode 0 play 1 edit pitch, 2 edit channel sample,
-  if (encoder_push_millis > 0 ) {
-    if ((now - encoder_push_millis) > 25 && ! encoder_delta ) {
-      if ( !encoder_held ) {
-        encoder_held = true;
-      }
-    }
-
-    if (step_push_millis > 0) { // we're pushing a step key too
-      if (encoder_push_millis < step_push_millis) {  // and encoder was pushed first
-        //strcpy(seq_info, "saveseq");
-      }
-    }
-  }
-
   // update encoder button state
   enc_button.update();
 
@@ -629,7 +614,7 @@ void loop() {
   if (settings_dirty && (now - settings_change_ms) > 1500) {
     bool anyPlaying = false;
     for (int i = 0; i < NTRACKS; ++i) if (voice[i].isPlaying) { anyPlaying = true; break; }
-    if (!anyPlaying) {
+    if (!anyPlaying ) {
       saveSettings();
       settings_dirty = false;
     }
