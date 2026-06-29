@@ -161,11 +161,6 @@ Bounce2::Button enc_button = Bounce2::Button();
 // additions
 #include <Wire.h>
 
-
-// from pikocore for bpm calcs on clk input
-// this is unused, deprecate?
-#include "runningavg.h"
-RunningAverage ra;
 volatile int clk_display;
 uint32_t clk_sync_last;
 
@@ -483,14 +478,6 @@ void setup() {
   digitalWrite(23, HIGH);
 
 
-  // set up runningavg
-  //ra.Init(5);
-  /* not yet
-    seq[0].trigger->generateRandomSequence(8, 16);
-    seq[2].trigger->generateRandomSequence(3, 16);
-    seq[5].trigger->generateRandomSequence(5, 16);
-    seq[7].trigger->generateRandomSequence(6, 16);
-  */
   //display_value(NUM_SAMPLES); // show number of samples on the display
 
   // init per-voice mix gains and ramps, then restore saved settings from flash

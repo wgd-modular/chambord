@@ -60,7 +60,7 @@ void clocktick (long clockperiod) {
       voice[track].isPlaying = false;
     }
     seq[track].trigger->doStep(); // next step advance
-    
+
   }
 }
 
