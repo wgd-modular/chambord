@@ -598,6 +598,8 @@ void loop() {
                 awaitingDoubleClick = false;
                 singleClickPending = false;
 
+              // Dblclk auto-save, but only while nothing is sounding, so the brief
+              // audio pause during the flash write happens in silence (no pop).
                 if (settings_dirty ) {
                   bool anyPlaying = false;
                   for (int i = 0; i < NTRACKS; ++i) if (voice[i].isPlaying) { anyPlaying = true; break; }
@@ -627,29 +629,6 @@ void loop() {
         if ( display_mode >= MODE_COUNT) display_mode = MODE_SELECT;
     }
 
-  // Encoder button:
-  //   short press  -> step turn-function: select -> pitch -> sample -> select
-  //   long press (>700ms) -> toggle CV control of the selected channel's volume
-    /*
-  if (enc_button.rose()) {
-    ui_activity_ms = now;
-    //btnOneLastTime = enc_button.previousDuration();
-    //if (btnOneLastTime > 700) {
-    if (longPressTriggered) {
-      cv_track = (cv_track == current_track) ? 99 : current_track; // 99 = CV off
-      markDirty();
-    }
-  } else if (enc_button.pressed() ) {
-    ui_activity_ms = now;
-    encoder_push_millis = now;
-    display_mode = display_mode + 1;
-    if ( display_mode >= MODE_COUNT) display_mode = MODE_SELECT;
-  } else {
-    encoder_push_millis = 0;
-    encoder_held = false;
-  }
-  */
-
   // CV input modulates the volume of the assigned channel (if any).
   // CV-driven volume is intentionally NOT persisted (would wear flash).
   if (cv_track < NTRACKS) {
@@ -669,22 +648,10 @@ void loop() {
     updateUI();
   }
 
-  // Debounced auto-save, but only while nothing is sounding, so the brief
-  // audio pause during the flash write happens in silence (no pop).
-  /*
-  if (settings_dirty && (now - settings_change_ms) > 1500) {
-    bool anyPlaying = false;
-    for (int i = 0; i < NTRACKS; ++i) if (voice[i].isPlaying) { anyPlaying = true; break; }
-    if (!anyPlaying ) {
-      saveSettings();
-      settings_dirty = false;
-    }
-  }*/
-
-
-
   /*
      These are from the original scarp peakobeats
+     May be useful if we introduce an outplay mode (as in, no triggers in?)
+
       if ( (encoder_pos != encoder_pos_last ) && display_mode == 1 ) {
         //uint8_t re = seq[i].trigger->getRepeats() + encoder_delta;
         seq[i].trigger->setRepeats(encoder_delta);
