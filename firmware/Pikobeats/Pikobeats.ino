@@ -417,8 +417,6 @@ uint16_t rightRotate(int shift, uint16_t value, uint8_t pattern_length) {
 
 // main core setup
 void setup() {
-  // set clock speed as in picokore
-  //set_sys_clock_khz(264000, true); don't do this :)
 
   if (debug) Serial.begin(57600);
 
@@ -441,7 +439,6 @@ void setup() {
 
 
   if (debug) Serial.flush();
-
 
   // ENCODER
   pinMode(encoderA_pin, INPUT_PULLUP);
