@@ -360,7 +360,7 @@ void __not_in_flash_func(ledRender)() {
 // When the encoder hasn't been touched for this long, the row turns into a
 // trigger-activity display ("screensaver"). While you ARE editing, the row
 // shows only the selected channel's page so nothing distracts you.
-#define SCREENSAVER_MS 3000
+#define SCREENSAVER_MS 5000
 uint32_t ui_activity_ms = 0;
 
 // Recompute per-channel LED colours. While editing, feedback lives only on the
@@ -451,7 +451,7 @@ void setup() {
   // Encoder button
   
   enc_button.attach( SHIFTBUTTON, INPUT ); // USE EXTERNAL PULL-UP
-  enc_button.interval(50); // 5ms debounce
+  enc_button.interval(10); // 5ms debounce
   enc_button.setPressedState(LOW);
 
 #ifdef MONITOR_CPU
