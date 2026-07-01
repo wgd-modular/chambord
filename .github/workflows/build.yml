@@ -38,9 +38,19 @@ jobs:
       - name: Install arduino-cli
         uses: arduino/setup-arduino-cli@v2
 
+      - name: Cache RP2350 core and libraries
+        id: cache-arduino
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.arduino15
+            ~/Arduino/libraries
+          key: arduino-${{ runner.os }}-${{ hashFiles('.github/workflows/build.yml') }}
+
       - name: Install RP2350 core and libraries
+        if: steps.cache-arduino.outputs.cache-hit != 'true'
         run: |
-          arduino-cli config init --additional-urls https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
+          arduino-cli config init --overwrite --additional-urls https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json
           arduino-cli core update-index
           arduino-cli core install rp2040:rp2040@5.6.1
           arduino-cli lib install \
